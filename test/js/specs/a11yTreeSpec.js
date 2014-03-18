@@ -1,14 +1,17 @@
 describe('a11yTree plugin', function() {
     const MAIN_SELECTOR = '#main';
-    const LEVEL_1_ID = 'level-1', LEVEL_2_ID = 'level-2', LEVEL_3_ID = 'level-3';
-
+    const LEVEL_1_ID = 'level-1', LEVEL_1_ID_SELECTOR = '#' + LEVEL_1_ID;
+    const LEVEL_2_ID = 'level-2', LEVEL_2_ID_SELECTOR = '#' + LEVEL_2_ID;
+    const LEVEL_3_ID = 'level-3'; LEVEL_3_ID_SELECTOR = '#' + LEVEL_3_ID;
+    const NO_CHILDREN_CLASS = 'no-children', NO_CHILDREN_CLASS_SELECTOR = '.' + NO_CHILDREN_CLASS;
+    const HAS_CHILDREN_CLASS = 'has-children', HAS_CHILDREN_CLASS_SELECTOR = '.' + HAS_CHILDREN_CLASS;
 
     beforeEach(function() {
         var htmlContent = '<div id="main"></div>';
         $('body').append(htmlContent);
         appendList(MAIN_SELECTOR, LEVEL_1_ID, 2);
-        appendList('#' + LEVEL_1_ID + ' > li:first-child', LEVEL_2_ID, 2);
-        appendList('#' + LEVEL_2_ID + ' > li:first-child', LEVEL_3_ID, 2);
+        appendList(LEVEL_1_ID_SELECTOR + ' > li:nth-child(1)', LEVEL_2_ID, 2);
+        appendList(LEVEL_2_ID_SELECTOR + ' > li:nth-child(1)', LEVEL_3_ID, 2);
     });
 
     afterEach(function() {
@@ -18,42 +21,42 @@ describe('a11yTree plugin', function() {
     describe('used on a parent ul element', function() {
 
         it('identifies the parent tree', function() {
-            $('#' + LEVEL_1_ID).a11yTree();
+            $(LEVEL_1_ID_SELECTOR).a11yTree();
             expect($('ul[role="tree"]').length).toBe(1);
-            expect($('#' + LEVEL_1_ID).attr('role')).toBe('tree');
+            expect($(LEVEL_1_ID_SELECTOR).attr('role')).toBe('tree');
         });
 
         it('identifies all tree items', function() {
-            $('#' + LEVEL_1_ID).a11yTree();
+            $(LEVEL_1_ID_SELECTOR).a11yTree();
             expect($('[role="treeitem"]').length).toBe(6);
             expect($('li[role="treeitem"]').length).toBe(6);
         });
 
         it('identifies the appropriate nested level for each tree item', function() {
-            $('#' + LEVEL_1_ID).a11yTree();
+            $(LEVEL_1_ID_SELECTOR).a11yTree();
             expect($('[aria-level]').length).toBe(6);
-            expect($('#' + LEVEL_1_ID + ' > li[aria-level="1"]').length).toBe(2);
-            expect($('#' + LEVEL_2_ID + ' > li[aria-level="2"]').length).toBe(2);
-            expect($('#' + LEVEL_3_ID + ' > li[aria-level="3"]').length).toBe(2);
+            expect($(LEVEL_1_ID_SELECTOR + ' > li[aria-level="1"]').length).toBe(2);
+            expect($(LEVEL_2_ID_SELECTOR + ' > li[aria-level="2"]').length).toBe(2);
+            expect($(LEVEL_3_ID_SELECTOR + ' > li[aria-level="3"]').length).toBe(2);
         });
 
         it('identifies items with no children', function() {
-            $('#' + LEVEL_1_ID).a11yTree();
-            expect($('.no-children').length).toBe(4);
-            expect($('#' + LEVEL_1_ID + ' > li:nth-child(2)').hasClass('no-children')).toBeTruthy();
-            expect($('#' + LEVEL_2_ID + ' > li:nth-child(2)').hasClass('no-children')).toBeTruthy();
-            expect($('#' + LEVEL_3_ID + ' > li:nth-child(1)').hasClass('no-children')).toBeTruthy();
-            expect($('#' + LEVEL_3_ID + ' > li:nth-child(2)').hasClass('no-children')).toBeTruthy();
+            $(LEVEL_1_ID_SELECTOR).a11yTree();
+            expect($(NO_CHILDREN_CLASS_SELECTOR).length).toBe(4);
+            expect($(LEVEL_1_ID_SELECTOR + ' > li:nth-child(2)').hasClass(NO_CHILDREN_CLASS)).toBeTruthy();
+            expect($(LEVEL_2_ID_SELECTOR + ' > li:nth-child(2)').hasClass(NO_CHILDREN_CLASS)).toBeTruthy();
+            expect($(LEVEL_3_ID_SELECTOR + ' > li:nth-child(1)').hasClass(NO_CHILDREN_CLASS)).toBeTruthy();
+            expect($(LEVEL_3_ID_SELECTOR + ' > li:nth-child(2)').hasClass(NO_CHILDREN_CLASS)).toBeTruthy();
         });
 
         it('identifies items with children', function() {
-            $('#' + LEVEL_1_ID).a11yTree();
+            $(LEVEL_1_ID_SELECTOR).a11yTree();
             expect($('ul[role="group"]').length).toBe(2);
-            expect($('.has-children').length).toBe(2);
-            expect($('#' + LEVEL_1_ID + ' > li:nth-child(1)').hasClass('has-children')).toBeTruthy();
-            expect($('#' + LEVEL_2_ID).attr('role')).toBe('group');
-            expect($('#' + LEVEL_2_ID + ' > li:nth-child(1)').hasClass('has-children')).toBeTruthy();
-            expect($('#' + LEVEL_3_ID).attr('role')).toBe('group');
+            expect($(HAS_CHILDREN_CLASS_SELECTOR).length).toBe(2);
+            expect($(LEVEL_1_ID_SELECTOR + ' > li:nth-child(1)').hasClass(HAS_CHILDREN_CLASS)).toBeTruthy();
+            expect($(LEVEL_2_ID_SELECTOR).attr('role')).toBe('group');
+            expect($(LEVEL_2_ID_SELECTOR + ' > li:nth-child(1)').hasClass(HAS_CHILDREN_CLASS)).toBeTruthy();
+            expect($(LEVEL_3_ID_SELECTOR).attr('role')).toBe('group');
         });
 
     });
