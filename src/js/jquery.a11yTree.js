@@ -21,30 +21,27 @@
     Plugin.prototype = {
             init : function () {
                 var $parentList = $(this.element);
-                identifyTree($parentList);
-                identifyChildren($parentList, 1);
+                identifyChildren($parentList, ARIA_TREE_ROLE, 1);
             }
     };
 
-    function identifyTree($list) {
-        $list.attr(ROLE_ATTR_NAME, ARIA_TREE_ROLE);
+    function identifySubChildren($listItem, nestingLevel) {
+        var $childList = $listItem.children(LIST_SELECTOR);
+        if ($childList.length > 0) {
+            $listItem.addClass(HAS_CHILDREN_CLASS);
+            identifyChildren($childList, ARIA_GROUP_ROLE, nestingLevel + 1);
+        } else {
+            $listItem.addClass(NO_CHILDREN_CLASS);
+        }
     }
 
-    function identifyChildren($list, nestingLevel) {
+    function identifyChildren($list, listRole, nestingLevel) {
+        $list.attr(ROLE_ATTR_NAME, listRole);
         $list.children(LIST_ITEM_SELECTOR).each(function(idx, listItem) {
             var $listItem = $(listItem);
-
             $listItem.attr(ROLE_ATTR_NAME,ARIA_TREEITEM_ROLE);
             $listItem.attr(ARIA_LEVEL_ATTR_NAME,nestingLevel);
-
-            var childList = $listItem.children(LIST_SELECTOR);
-            if (childList.length > 0) {
-                childList.attr(ROLE_ATTR_NAME,ARIA_GROUP_ROLE);
-                $listItem.addClass(HAS_CHILDREN_CLASS);
-                identifyChildren(childList, nestingLevel+1);
-                return;
-            }
-            $listItem.addClass(NO_CHILDREN_CLASS);
+            identifySubChildren($listItem, nestingLevel);
         });
     }
 
