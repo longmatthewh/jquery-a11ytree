@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en-US">
+    <head>
+        <meta charset="utf-8">
+        <title>jquery.a11yTree demo page</title>
+        <link href='http://fonts.googleapis.com/css?family=PT+Sans' rel='stylesheet' type='text/css'>
+        <link href="demo.css" rel="stylesheet">
+    </head>
+    <body>
+    <article>
+        <header>
+            <h1>Demo Page for <em>jquery.a11yTree</em></h1>
+            Here's the demo page for the jquery.a11yTree jQuery plugin.
+        </header>
+        <section id="all-defaults">
+            <h2>Instruments:</h2>
+            <ul>
+                <li>
+                    Guitars
+                    <ul>
+                        <li>
+                            Fender
+                            <ul>
+                                <li>Stratocaster</li>
+                                <li>Telecaster</li>
+                            </ul>
+                        </li>
+                        <li>Gibson</li>
+                    </ul>
+                </li>
+                <li>Drums</li>
+            </ul>
+        </section>
+    </article>
+    <script src="../src/js/lib/jquery-1.11.0.js"></script>
+    <script src="../dist/jquery.a11yTree.min.js"></script>
+    <script>
+        $('#all-defaults > ul').a11yTree();
+    </script>
+    </body>
+</html>
