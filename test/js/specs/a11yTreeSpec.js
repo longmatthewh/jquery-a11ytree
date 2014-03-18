@@ -20,46 +20,55 @@ describe('a11yTree plugin', function() {
 
     describe('used on a parent ul element', function() {
 
-        it('identifies the parent tree', function() {
+        beforeEach(function() {
             $(LEVEL_1_ID_SELECTOR).a11yTree();
+        });
+
+        it('identifies the parent tree', function() {
             expect($('ul[role="tree"]').length).toBe(1);
             expect($(LEVEL_1_ID_SELECTOR).attr('role')).toBe('tree');
         });
 
         it('identifies all tree items', function() {
-            $(LEVEL_1_ID_SELECTOR).a11yTree();
-            expect($('[role="treeitem"]').length).toBe(6);
-            expect($('li[role="treeitem"]').length).toBe(6);
+            expect($('[role="treeitem"]').length).toBe($('li[role="treeitem"]').length);
         });
 
         it('identifies the appropriate nested level for each tree item', function() {
-            $(LEVEL_1_ID_SELECTOR).a11yTree();
             expect($('[aria-level]').length).toBe(6);
-            expect($(LEVEL_1_ID_SELECTOR + ' > li[aria-level="1"]').length).toBe(2);
-            expect($(LEVEL_2_ID_SELECTOR + ' > li[aria-level="2"]').length).toBe(2);
-            expect($(LEVEL_3_ID_SELECTOR + ' > li[aria-level="3"]').length).toBe(2);
+            verifyAriaLevelForChildren(LEVEL_1_ID_SELECTOR, 1, 2);
+            verifyAriaLevelForChildren(LEVEL_2_ID_SELECTOR, 2, 2);
+            verifyAriaLevelForChildren(LEVEL_3_ID_SELECTOR, 3, 2);
         });
 
         it('identifies items with no children', function() {
-            $(LEVEL_1_ID_SELECTOR).a11yTree();
             expect($(NO_CHILDREN_CLASS_SELECTOR).length).toBe(4);
-            expect($(LEVEL_1_ID_SELECTOR + ' > li:nth-child(2)').hasClass(NO_CHILDREN_CLASS)).toBeTruthy();
-            expect($(LEVEL_2_ID_SELECTOR + ' > li:nth-child(2)').hasClass(NO_CHILDREN_CLASS)).toBeTruthy();
-            expect($(LEVEL_3_ID_SELECTOR + ' > li:nth-child(1)').hasClass(NO_CHILDREN_CLASS)).toBeTruthy();
-            expect($(LEVEL_3_ID_SELECTOR + ' > li:nth-child(2)').hasClass(NO_CHILDREN_CLASS)).toBeTruthy();
+            verifyClassForChildren(LEVEL_1_ID_SELECTOR, 2, NO_CHILDREN_CLASS);
+            verifyClassForChildren(LEVEL_2_ID_SELECTOR, 2, NO_CHILDREN_CLASS);
+            verifyClassForChildren(LEVEL_3_ID_SELECTOR, 1, NO_CHILDREN_CLASS);
+            verifyClassForChildren(LEVEL_3_ID_SELECTOR, 2, NO_CHILDREN_CLASS);
         });
 
         it('identifies items with children', function() {
-            $(LEVEL_1_ID_SELECTOR).a11yTree();
-            expect($('ul[role="group"]').length).toBe(2);
-            expect($(HAS_CHILDREN_CLASS_SELECTOR).length).toBe(2);
-            expect($(LEVEL_1_ID_SELECTOR + ' > li:nth-child(1)').hasClass(HAS_CHILDREN_CLASS)).toBeTruthy();
-            expect($(LEVEL_2_ID_SELECTOR).attr('role')).toBe('group');
-            expect($(LEVEL_2_ID_SELECTOR + ' > li:nth-child(1)').hasClass(HAS_CHILDREN_CLASS)).toBeTruthy();
-            expect($(LEVEL_3_ID_SELECTOR).attr('role')).toBe('group');
+            expect($('ul[role="group"]').length).toBe($(HAS_CHILDREN_CLASS_SELECTOR).length);
+            verifyElementHasAttribute(LEVEL_2_ID_SELECTOR,'role','group');
+            verifyElementHasAttribute(LEVEL_3_ID_SELECTOR,'role','group');
+            verifyClassForChildren(LEVEL_1_ID_SELECTOR, 1, HAS_CHILDREN_CLASS);
+            verifyClassForChildren(LEVEL_2_ID_SELECTOR, 1, HAS_CHILDREN_CLASS);
         });
 
     });
+
+    function verifyElementHasAttribute(selector,attribute,value) {
+        expect($(selector).attr(attribute)).toBe(value);
+    }
+
+    function verifyClassForChildren(ulSelector, childIdx, className) {
+        expect($(ulSelector + ' > li:nth-child(' + childIdx + ')').hasClass(className)).toBeTruthy();
+    }
+
+    function verifyAriaLevelForChildren(ulSelector, level, count) {
+        expect($(ulSelector + ' > li[aria-level="' + level + '"]').length).toBe(count);
+    }
 
     function appendList(parentSelector, listId, numberOfListItems) {
         var listHtml = '<ul id="' + listId + '">' + createListItems(listId, numberOfListItems) + '</ul>';
