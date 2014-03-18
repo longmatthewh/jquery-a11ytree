@@ -16,15 +16,25 @@
 
     Plugin.prototype = {
             init : function () {
-                checkForChildren($(this.element));
+                identifyTree($(this.element));
+                checkForChildren($(this.element), 1);
             }
     };
 
-    function checkForChildren(obj) {
+    function identifyTree(obj) {
+        obj.attr('role','tree');
+    }
+
+    function checkForChildren(obj, nestingLevel) {
         obj.children('li').each(function(idx, listItem) {
+            $(listItem).attr('role','treeitem');
+            $(listItem).attr('aria-level',nestingLevel);
+
             var childList = $(listItem).children('ul');
             if (childList.length > 0) {
-                checkForChildren(childList);
+                childList.attr('role','group');
+                $(listItem).addClass('has-children');
+                checkForChildren(childList, nestingLevel+1);
                 return;
             }
             $(listItem).addClass('no-children');

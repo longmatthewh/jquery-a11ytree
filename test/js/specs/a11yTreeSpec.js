@@ -1,4 +1,4 @@
-describe('showMarkup plugin', function() {
+describe('a11yTree plugin', function() {
     const MAIN_SELECTOR = '#main';
     const LEVEL_1_ID = 'level-1', LEVEL_2_ID = 'level-2', LEVEL_3_ID = 'level-3';
 
@@ -17,6 +17,26 @@ describe('showMarkup plugin', function() {
 
     describe('used on a parent ul element', function() {
 
+        it('identifies the parent tree', function() {
+            $('#' + LEVEL_1_ID).a11yTree();
+            expect($('ul[role="tree"]').length).toBe(1);
+            expect($('#' + LEVEL_1_ID).attr('role')).toBe('tree');
+        });
+
+        it('identifies all tree items', function() {
+            $('#' + LEVEL_1_ID).a11yTree();
+            expect($('[role="treeitem"]').length).toBe(6);
+            expect($('li[role="treeitem"]').length).toBe(6);
+        });
+
+        it('identifies the appropriate nested level for each tree item', function() {
+            $('#' + LEVEL_1_ID).a11yTree();
+            expect($('[aria-level]').length).toBe(6);
+            expect($('#' + LEVEL_1_ID + ' > li[aria-level="1"]').length).toBe(2);
+            expect($('#' + LEVEL_2_ID + ' > li[aria-level="2"]').length).toBe(2);
+            expect($('#' + LEVEL_3_ID + ' > li[aria-level="3"]').length).toBe(2);
+        });
+
         it('identifies items with no children', function() {
             $('#' + LEVEL_1_ID).a11yTree();
             expect($('.no-children').length).toBe(4);
@@ -24,6 +44,16 @@ describe('showMarkup plugin', function() {
             expect($('#' + LEVEL_2_ID + ' > li:nth-child(2)').hasClass('no-children')).toBeTruthy();
             expect($('#' + LEVEL_3_ID + ' > li:nth-child(1)').hasClass('no-children')).toBeTruthy();
             expect($('#' + LEVEL_3_ID + ' > li:nth-child(2)').hasClass('no-children')).toBeTruthy();
+        });
+
+        it('identifies items with children', function() {
+            $('#' + LEVEL_1_ID).a11yTree();
+            expect($('ul[role="group"]').length).toBe(2);
+            expect($('.has-children').length).toBe(2);
+            expect($('#' + LEVEL_1_ID + ' > li:nth-child(1)').hasClass('has-children')).toBeTruthy();
+            expect($('#' + LEVEL_2_ID).attr('role')).toBe('group');
+            expect($('#' + LEVEL_2_ID + ' > li:nth-child(1)').hasClass('has-children')).toBeTruthy();
+            expect($('#' + LEVEL_3_ID).attr('role')).toBe('group');
         });
 
     });
