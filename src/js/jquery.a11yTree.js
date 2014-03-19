@@ -4,6 +4,7 @@
     var ROLE_ATTR_NAME = 'role', ARIA_LEVEL_ATTR_NAME = 'aria-level';
     var ARIA_TREE_ROLE = 'tree', ARIA_TREEITEM_ROLE = 'treeitem', ARIA_GROUP_ROLE = 'group';
     var HAS_CHILDREN_CLASS = 'has-children', NO_CHILDREN_CLASS = 'no-children';
+    var COLLAPSED_CLASS = 'collapsed';
 
     defaults = {
         initShow: true,
@@ -29,6 +30,7 @@
         var $childList = $listItem.children(LIST_SELECTOR);
         if ($childList.length > 0) {
             $listItem.addClass(HAS_CHILDREN_CLASS);
+            $listItem.addClass(COLLAPSED_CLASS);
             $listItem.prepend('<div class="toggle" aria-hidden="true"></div>');
             identifyChildren($childList, ARIA_GROUP_ROLE, nestingLevel + 1);
         } else {

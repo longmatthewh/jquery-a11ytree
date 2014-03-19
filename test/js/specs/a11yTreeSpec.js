@@ -5,6 +5,7 @@ describe('a11yTree plugin', function() {
     const LEVEL_3_ID = 'level-3', LEVEL_3_ID_SELECTOR = '#' + LEVEL_3_ID;
     const NO_CHILDREN_CLASS = 'no-children', NO_CHILDREN_CLASS_SELECTOR = '.' + NO_CHILDREN_CLASS;
     const HAS_CHILDREN_CLASS = 'has-children', HAS_CHILDREN_CLASS_SELECTOR = '.' + HAS_CHILDREN_CLASS;
+    const COLLAPSED_CLASS = 'collapsed', COLLAPSED_CLASS_SELECTOR = '.' + COLLAPSED_CLASS;
     const TOGGLE_CLASS_SELECTOR = '.toggle';
 
     beforeEach(function() {
@@ -55,6 +56,12 @@ describe('a11yTree plugin', function() {
             verifyElementHasAttribute(LEVEL_3_ID_SELECTOR,'role','group');
             verifyClassForChildren(LEVEL_1_ID_SELECTOR, 1, HAS_CHILDREN_CLASS);
             verifyClassForChildren(LEVEL_2_ID_SELECTOR, 1, HAS_CHILDREN_CLASS);
+        });
+
+        it('items with children are collapsed by default', function() {
+            expect($(COLLAPSED_CLASS_SELECTOR).length).toBe(2);
+            verifyClassForChildren(LEVEL_1_ID_SELECTOR, 1, COLLAPSED_CLASS);
+            verifyClassForChildren(LEVEL_2_ID_SELECTOR, 1, COLLAPSED_CLASS);
         });
 
         it('adds toggle control to items with children', function() {

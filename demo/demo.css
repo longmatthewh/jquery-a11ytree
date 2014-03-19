@@ -11,15 +11,22 @@ ul[role="tree"] li {
     width: 8px;
 }
 
+.toggle {
+    border: 1px solid #999999;
+    display: inline-block;
+    cursor: pointer;
+}
+
 .toggle:after {
-    content: "+";
     position: absolute;
     text-align: center;
     line-height: 8px;
 }
 
-.toggle {
-    border: 1px solid #999999;
-    display: inline-block;
-    cursor: pointer;
+.collapsed .toggle:after {
+    content: "+";
+}
+
+.collapsed ul {
+    display:none;
 }
