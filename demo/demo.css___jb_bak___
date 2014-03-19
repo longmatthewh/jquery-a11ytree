@@ -1,0 +1,32 @@
+body {
+    font-family:"PT Sans";
+}
+
+ul[role="tree"] li {
+    list-style-type: none;
+}
+
+.toggle, .toggle:after {
+    height: 8px;
+    width: 8px;
+}
+
+.toggle {
+    border: 1px solid #999999;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.toggle:after {
+    position: absolute;
+    text-align: center;
+    line-height: 8px;
+}
+
+.collapsed .toggle:after {
+    content: "+";
+}
+
+.collapsed ul {
+    //display:none;
+}

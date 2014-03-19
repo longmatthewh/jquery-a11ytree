@@ -70,6 +70,11 @@ describe('a11yTree plugin', function() {
             verifyItemHasToggle($(LEVEL_2_ID_SELECTOR + ' > li:nth-child(1)'));
         });
 
+        it('clicking collapsed toggle expands children', function() {
+            $(LEVEL_1_ID_SELECTOR + ' > li:nth-child(1)').find('.collapsed .toggle').click();
+        });
+
+
     });
 
     function verifyItemHasToggle($listItem) {

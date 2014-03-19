@@ -29,8 +29,7 @@
     function identifySubChildren($listItem, nestingLevel) {
         var $childList = $listItem.children(LIST_SELECTOR);
         if ($childList.length > 0) {
-            $listItem.addClass(HAS_CHILDREN_CLASS);
-            $listItem.addClass(COLLAPSED_CLASS);
+            $listItem.addClass(HAS_CHILDREN_CLASS).addClass(COLLAPSED_CLASS);
             $listItem.prepend('<div class="toggle" aria-hidden="true"></div>');
             identifyChildren($childList, ARIA_GROUP_ROLE, nestingLevel + 1);
         } else {
@@ -40,11 +39,10 @@
 
     function identifyChildren($list, listRole, nestingLevel) {
         $list.attr(ROLE_ATTR_NAME, listRole);
-        $list.children(LIST_ITEM_SELECTOR).each(function(idx, listItem) {
-            var $listItem = $(listItem);
-            $listItem.attr(ROLE_ATTR_NAME,ARIA_TREEITEM_ROLE);
-            $listItem.attr(ARIA_LEVEL_ATTR_NAME,nestingLevel);
-            identifySubChildren($listItem, nestingLevel);
+        var $listItems = $list.children(LIST_ITEM_SELECTOR);
+        $listItems.attr(ROLE_ATTR_NAME,ARIA_TREEITEM_ROLE).attr(ARIA_LEVEL_ATTR_NAME,nestingLevel);
+        $listItems.each(function() {
+            identifySubChildren($(this), nestingLevel);
         });
     }
 
