@@ -20,17 +20,21 @@
     }
 
     Plugin.prototype = {
-            init : function () {
-                var $parentList = $(this.element);
-                identifyChildren($parentList, ARIA_TREE_ROLE, 1);
-            }
+        init : function () {
+            var $tree = $(this.element);
+            identifyChildren($tree, ARIA_TREE_ROLE, 1);
+        }
     };
+
+    function identifyListItemWithChildren($listItem) {
+        $listItem.addClass(HAS_CHILDREN_CLASS).addClass(COLLAPSED_CLASS);
+        $listItem.prepend('<div class="toggle" aria-hidden="true"></div>');
+    }
 
     function identifySubChildren($listItem, nestingLevel) {
         var $childList = $listItem.children(LIST_SELECTOR);
         if ($childList.length > 0) {
-            $listItem.addClass(HAS_CHILDREN_CLASS).addClass(COLLAPSED_CLASS);
-            $listItem.prepend('<div class="toggle" aria-hidden="true"></div>');
+            identifyListItemWithChildren($listItem);
             identifyChildren($childList, ARIA_GROUP_ROLE, nestingLevel + 1);
         } else {
             $listItem.addClass(NO_CHILDREN_CLASS);
