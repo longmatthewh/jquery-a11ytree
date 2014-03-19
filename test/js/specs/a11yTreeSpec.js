@@ -5,6 +5,7 @@ describe('a11yTree plugin', function() {
     const LEVEL_3_ID = 'level-3', LEVEL_3_ID_SELECTOR = '#' + LEVEL_3_ID;
     const NO_CHILDREN_CLASS = 'no-children', NO_CHILDREN_CLASS_SELECTOR = '.' + NO_CHILDREN_CLASS;
     const HAS_CHILDREN_CLASS = 'has-children', HAS_CHILDREN_CLASS_SELECTOR = '.' + HAS_CHILDREN_CLASS;
+    const TOGGLE_CLASS_SELECTOR = '.toggle';
 
     beforeEach(function() {
         var htmlContent = '<div id="main"></div>';
@@ -56,7 +57,20 @@ describe('a11yTree plugin', function() {
             verifyClassForChildren(LEVEL_2_ID_SELECTOR, 1, HAS_CHILDREN_CLASS);
         });
 
+        it('adds toggle control to items with children', function() {
+            expect($(TOGGLE_CLASS_SELECTOR).length).toBe(2);
+            verifyItemHasToggle($(LEVEL_1_ID_SELECTOR + ' > li:nth-child(1)'));
+            verifyItemHasToggle($(LEVEL_2_ID_SELECTOR + ' > li:nth-child(1)'));
+        });
+
     });
+
+    function verifyItemHasToggle($listItem) {
+        var $toggle = $listItem.children(TOGGLE_CLASS_SELECTOR);
+        expect($toggle.length).toBe(1);
+        expect($toggle.attr('aria-hidden')).toBe('true');
+        expect($listItem.children(TOGGLE_CLASS_SELECTOR).length).toBe(1);
+    }
 
     function verifyElementHasAttribute(selector,attribute,value) {
         expect($(selector).attr(attribute)).toBe(value);

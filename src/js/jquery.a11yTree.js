@@ -29,6 +29,7 @@
         var $childList = $listItem.children(LIST_SELECTOR);
         if ($childList.length > 0) {
             $listItem.addClass(HAS_CHILDREN_CLASS);
+            $listItem.prepend('<div class="toggle" aria-hidden="true"></div>');
             identifyChildren($childList, ARIA_GROUP_ROLE, nestingLevel + 1);
         } else {
             $listItem.addClass(NO_CHILDREN_CLASS);
