@@ -5,6 +5,7 @@
     var ARIA_TREE_ROLE = 'tree', ARIA_TREEITEM_ROLE = 'treeitem', ARIA_GROUP_ROLE = 'group';
     var HAS_CHILDREN_CLASS = 'has-children', NO_CHILDREN_CLASS = 'no-children';
     var COLLAPSED_CLASS = 'collapsed';
+    var EXPANDED_CLASS = 'expanded';
 
     defaults = {
         initShow: true,
@@ -23,8 +24,20 @@
         init : function () {
             var $tree = $(this.element);
             identifyChildren($tree, ARIA_TREE_ROLE, 1);
+            addToggleClick($tree);
         }
     };
+
+    function addToggleClick($tree) {
+        $tree.find('.toggle').on('click', function() {
+            var $toggle = $(this);
+            if ($toggle.parent('li').hasClass(COLLAPSED_CLASS)) {
+                $toggle.parent('li').removeClass(COLLAPSED_CLASS).addClass(EXPANDED_CLASS);
+            } else {
+                $toggle.parent('li').removeClass(EXPANDED_CLASS).addClass(COLLAPSED_CLASS);
+            }
+        });
+    }
 
     function identifyListItemWithChildren($listItem) {
         $listItem.addClass(HAS_CHILDREN_CLASS).addClass(COLLAPSED_CLASS);

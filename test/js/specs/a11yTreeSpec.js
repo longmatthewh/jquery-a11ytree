@@ -1,4 +1,4 @@
-describe('a11yTree plugin', function() {
+describe('a11yTree plugin', function () {
     const MAIN_SELECTOR = '#main';
     const LEVEL_1_ID = 'level-1', LEVEL_1_ID_SELECTOR = '#' + LEVEL_1_ID;
     const LEVEL_2_ID = 'level-2', LEVEL_2_ID_SELECTOR = '#' + LEVEL_2_ID;
@@ -6,9 +6,10 @@ describe('a11yTree plugin', function() {
     const NO_CHILDREN_CLASS = 'no-children', NO_CHILDREN_CLASS_SELECTOR = '.' + NO_CHILDREN_CLASS;
     const HAS_CHILDREN_CLASS = 'has-children', HAS_CHILDREN_CLASS_SELECTOR = '.' + HAS_CHILDREN_CLASS;
     const COLLAPSED_CLASS = 'collapsed', COLLAPSED_CLASS_SELECTOR = '.' + COLLAPSED_CLASS;
+    const EXPANDED_CLASS = 'expanded', EXPANDED_CLASS_SELECTOR = '.' + EXPANDED_CLASS;
     const TOGGLE_CLASS_SELECTOR = '.toggle';
 
-    beforeEach(function() {
+    beforeEach(function () {
         var htmlContent = '<div id="main"></div>';
         $('body').append(htmlContent);
         appendList(MAIN_SELECTOR, LEVEL_1_ID, 2);
@@ -16,33 +17,33 @@ describe('a11yTree plugin', function() {
         appendList(LEVEL_2_ID_SELECTOR + ' > li:nth-child(1)', LEVEL_3_ID, 2);
     });
 
-    afterEach(function() {
+    afterEach(function () {
         $(MAIN_SELECTOR).remove();
     });
 
-    describe('used on a parent ul element', function() {
+    describe('used on a parent ul element', function () {
 
-        beforeEach(function() {
+        beforeEach(function () {
             $(LEVEL_1_ID_SELECTOR).a11yTree();
         });
 
-        it('identifies the parent tree', function() {
+        it('identifies the parent tree', function () {
             expect($('ul[role="tree"]').length).toBe(1);
             expect($(LEVEL_1_ID_SELECTOR).attr('role')).toBe('tree');
         });
 
-        it('identifies all tree items', function() {
+        it('identifies all tree items', function () {
             expect($('[role="treeitem"]').length).toBe($('li[role="treeitem"]').length);
         });
 
-        it('identifies the appropriate nested level for each tree item', function() {
+        it('identifies the appropriate nested level for each tree item', function () {
             expect($('[aria-level]').length).toBe(6);
             verifyAriaLevelForChildren(LEVEL_1_ID_SELECTOR, 1, 2);
             verifyAriaLevelForChildren(LEVEL_2_ID_SELECTOR, 2, 2);
             verifyAriaLevelForChildren(LEVEL_3_ID_SELECTOR, 3, 2);
         });
 
-        it('identifies items with no children', function() {
+        it('identifies items with no children', function () {
             expect($(NO_CHILDREN_CLASS_SELECTOR).length).toBe(4);
             verifyClassForChildren(LEVEL_1_ID_SELECTOR, 2, NO_CHILDREN_CLASS);
             verifyClassForChildren(LEVEL_2_ID_SELECTOR, 2, NO_CHILDREN_CLASS);
@@ -50,32 +51,61 @@ describe('a11yTree plugin', function() {
             verifyClassForChildren(LEVEL_3_ID_SELECTOR, 2, NO_CHILDREN_CLASS);
         });
 
-        it('identifies items with children', function() {
+        it('identifies items with children', function () {
             expect($('ul[role="group"]').length).toBe($(HAS_CHILDREN_CLASS_SELECTOR).length);
-            verifyElementHasAttribute(LEVEL_2_ID_SELECTOR,'role','group');
-            verifyElementHasAttribute(LEVEL_3_ID_SELECTOR,'role','group');
+            verifyElementHasAttribute(LEVEL_2_ID_SELECTOR, 'role', 'group');
+            verifyElementHasAttribute(LEVEL_3_ID_SELECTOR, 'role', 'group');
             verifyClassForChildren(LEVEL_1_ID_SELECTOR, 1, HAS_CHILDREN_CLASS);
             verifyClassForChildren(LEVEL_2_ID_SELECTOR, 1, HAS_CHILDREN_CLASS);
         });
 
-        it('items with children are collapsed by default', function() {
-            expect($(COLLAPSED_CLASS_SELECTOR).length).toBe(2);
+        it('items with children are collapsed by default', function () {
+            expect($(COLLAPSED_CLASS_SELECTOR).length).toBe($(HAS_CHILDREN_CLASS_SELECTOR).length);
             verifyClassForChildren(LEVEL_1_ID_SELECTOR, 1, COLLAPSED_CLASS);
             verifyClassForChildren(LEVEL_2_ID_SELECTOR, 1, COLLAPSED_CLASS);
         });
 
-        it('adds toggle control to items with children', function() {
+        it('adds toggle control to items with children', function () {
             expect($(TOGGLE_CLASS_SELECTOR).length).toBe(2);
-            verifyItemHasToggle($(LEVEL_1_ID_SELECTOR + ' > li:nth-child(1)'));
-            verifyItemHasToggle($(LEVEL_2_ID_SELECTOR + ' > li:nth-child(1)'));
+            verifyItemHasToggle(getFirstItemInList(LEVEL_1_ID_SELECTOR));
+            verifyItemHasToggle(getFirstItemInList(LEVEL_2_ID_SELECTOR));
         });
 
-        it('clicking collapsed toggle expands children', function() {
-            $(LEVEL_1_ID_SELECTOR + ' > li:nth-child(1)').find('.collapsed .toggle').click();
+        it('clicking collapsed toggle expands only direct children', function () {
+            var $firstLevel1Item = getFirstItemInList(LEVEL_1_ID_SELECTOR);
+            $firstLevel1Item.children(TOGGLE_CLASS_SELECTOR).click();
+            expect($(EXPANDED_CLASS_SELECTOR).length).toBe(1);
+            isExpanded($firstLevel1Item);
         });
 
+        it('clicking expanded toggle collapses children', function () {
+            var $firstLevel1Item = getFirstItemInList(LEVEL_1_ID_SELECTOR);
+            var $firstLevel2Item = getFirstItemInList(LEVEL_2_ID_SELECTOR);
 
+            $firstLevel1Item.children(TOGGLE_CLASS_SELECTOR).click();
+            $firstLevel2Item.children(TOGGLE_CLASS_SELECTOR).click();
+            $firstLevel1Item.children(TOGGLE_CLASS_SELECTOR).click();
+
+            expect($(EXPANDED_CLASS_SELECTOR).length).toBe(1);
+            expect($(COLLAPSED_CLASS_SELECTOR).length).toBe(1);
+            isCollapsed($firstLevel1Item);
+            isExpanded($firstLevel2Item);
+        });
     });
+
+    function getFirstItemInList(listSelector) {
+        return $(listSelector + ' > li:nth-child(1)');
+    }
+
+    function isExpanded($item) {
+        expect($item.hasClass(COLLAPSED_CLASS)).toBe(false);
+        expect($item.hasClass(EXPANDED_CLASS)).toBe(true);
+    }
+
+    function isCollapsed($item) {
+        expect($item.hasClass(COLLAPSED_CLASS)).toBe(true);
+        expect($item.hasClass(EXPANDED_CLASS)).toBe(false);
+    }
 
     function verifyItemHasToggle($listItem) {
         var $toggle = $listItem.children(TOGGLE_CLASS_SELECTOR);
@@ -84,7 +114,7 @@ describe('a11yTree plugin', function() {
         expect($listItem.children(TOGGLE_CLASS_SELECTOR).length).toBe(1);
     }
 
-    function verifyElementHasAttribute(selector,attribute,value) {
+    function verifyElementHasAttribute(selector, attribute, value) {
         expect($(selector).attr(attribute)).toBe(value);
     }
 

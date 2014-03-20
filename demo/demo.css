@@ -23,10 +23,18 @@ ul[role="tree"] li {
     line-height: 8px;
 }
 
-.collapsed .toggle:after {
+.collapsed > .toggle:after {
     content: "+";
 }
 
-.collapsed ul {
+.expanded > .toggle:after {
+    content: "-";
+}
+
+.collapsed > ul {
     display:none;
+}
+
+.expanded > ul {
+    display:block;
 }
