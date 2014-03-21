@@ -1,5 +1,6 @@
 describe('a11yTree plugin', function () {
     const MAIN_SELECTOR = '#main';
+    const LIST_ITEM_SELECTOR = 'li';
     const LEVEL_1_ID = 'level-1', LEVEL_1_ID_SELECTOR = '#' + LEVEL_1_ID;
     const LEVEL_2_ID = 'level-2', LEVEL_2_ID_SELECTOR = '#' + LEVEL_2_ID;
     const LEVEL_3_ID = 'level-3', LEVEL_3_ID_SELECTOR = '#' + LEVEL_3_ID;
@@ -20,6 +21,7 @@ describe('a11yTree plugin', function () {
     afterEach(function () {
         $(MAIN_SELECTOR).remove();
     });
+
 
     describe('used on a parent ul element', function () {
 
@@ -65,36 +67,77 @@ describe('a11yTree plugin', function () {
             verifyClassForChildren(LEVEL_2_ID_SELECTOR, 1, COLLAPSED_CLASS);
         });
 
-        it('adds toggle control to items with children', function () {
-            expect($(TOGGLE_CLASS_SELECTOR).length).toBe(2);
-            verifyItemHasToggle(getFirstItemInList(LEVEL_1_ID_SELECTOR));
-            verifyItemHasToggle(getFirstItemInList(LEVEL_2_ID_SELECTOR));
-        });
 
-        it('clicking collapsed toggle expands only direct children', function () {
-            var $firstLevel1Item = getFirstItemInList(LEVEL_1_ID_SELECTOR);
-            $firstLevel1Item.children(TOGGLE_CLASS_SELECTOR).click();
-            expect($(EXPANDED_CLASS_SELECTOR).length).toBe(1);
-            isExpanded($firstLevel1Item);
-        });
+        describe('can be navigated using the mouse and keyboard', function() {
 
-        it('clicking expanded toggle collapses children', function () {
-            var $firstLevel1Item = getFirstItemInList(LEVEL_1_ID_SELECTOR);
-            var $firstLevel2Item = getFirstItemInList(LEVEL_2_ID_SELECTOR);
+            var $firstLevel1Item, $firstLevel2Item, $secondLevel1Item;
 
-            $firstLevel1Item.children(TOGGLE_CLASS_SELECTOR).click();
-            $firstLevel2Item.children(TOGGLE_CLASS_SELECTOR).click();
-            $firstLevel1Item.children(TOGGLE_CLASS_SELECTOR).click();
+            beforeEach(function() {
+                $firstLevel1Item = getNthItemInList(LEVEL_1_ID_SELECTOR, 1);
+                $firstLevel2Item = getNthItemInList(LEVEL_2_ID_SELECTOR, 1);
+                $secondLevel1Item = getNthItemInList(LEVEL_1_ID_SELECTOR, 2);
+            });
 
-            expect($(EXPANDED_CLASS_SELECTOR).length).toBe(1);
-            expect($(COLLAPSED_CLASS_SELECTOR).length).toBe(1);
-            isCollapsed($firstLevel1Item);
-            isExpanded($firstLevel2Item);
+            it('adds each item to the tab order', function() {
+                expect($(LEVEL_1_ID_SELECTOR).find('li[tabindex="0"]').length).toBe($(LEVEL_1_ID_SELECTOR).find(LIST_ITEM_SELECTOR).length);
+            });
+
+            it('adds toggle control to items with children', function () {
+                expect($(TOGGLE_CLASS_SELECTOR).length).toBe(2);
+                verifyItemHasToggle($firstLevel1Item);
+                verifyItemHasToggle($firstLevel2Item);
+            });
+
+            it('clicking collapsed toggle expands only direct children', function () {
+                $firstLevel1Item.children(TOGGLE_CLASS_SELECTOR).click();
+                expect($(EXPANDED_CLASS_SELECTOR).length).toBe(1);
+                isExpanded($firstLevel1Item);
+            });
+
+            it('clicking expanded toggle collapses only direct children', function () {
+                $firstLevel1Item.children(TOGGLE_CLASS_SELECTOR).click();
+                $firstLevel2Item.children(TOGGLE_CLASS_SELECTOR).click();
+                $firstLevel1Item.children(TOGGLE_CLASS_SELECTOR).click();
+
+                expect($(EXPANDED_CLASS_SELECTOR).length).toBe(1);
+                expect($(COLLAPSED_CLASS_SELECTOR).length).toBe(1);
+                isCollapsed($firstLevel1Item);
+                isExpanded($firstLevel2Item);
+            });
+
+            it('pressing the down arrow key focuses on the next expanded element in the tree', function() {
+                $firstLevel1Item.focus();
+                triggerKeydown(40);
+                expect($(LEVEL_1_ID_SELECTOR + ' > :focus').length).toBe(1);
+                expect($secondLevel1Item.is(':focus')).toBe(true);
+            });
+
+            it('pressing the up arrow key focuses on the previous expanded element in the tree', function() {
+                $secondLevel1Item.focus();
+                triggerKeydown(38);
+                expect($(LEVEL_1_ID_SELECTOR + ' > :focus').length).toBe(1);
+                expect($firstLevel1Item.is(':focus')).toBe(true);
+            });
+
+            it('pressing the right arrow key expands the child list when exists in the tree', function() {
+                $firstLevel1Item.focus();
+                triggerKeydown(39);
+                expect($(LEVEL_1_ID_SELECTOR + ' > :focus').length).toBe(1);
+                expect($firstLevel1Item.is(':focus')).toBe(true);
+                expect($firstLevel1Item.hasClass(EXPANDED_CLASS)).toBe(true);
+            });
         });
     });
 
-    function getFirstItemInList(listSelector) {
-        return $(listSelector + ' > li:nth-child(1)');
+
+    function triggerKeydown(key) {
+        var event = jQuery.Event('keydown');
+        event.which = key;
+        $(LEVEL_1_ID_SELECTOR).trigger(event);
+    }
+
+    function getNthItemInList(listSelector, idx) {
+        return $(listSelector + ' > li:nth-child(' + idx + ')');
     }
 
     function isExpanded($item) {

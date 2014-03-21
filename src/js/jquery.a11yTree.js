@@ -25,6 +25,7 @@
             var $tree = $(this.element);
             identifyChildren($tree, ARIA_TREE_ROLE, 1);
             addToggleClick($tree);
+            addKeyBoardNav($tree);
         }
     };
 
@@ -35,6 +36,22 @@
                 $toggle.parent('li').removeClass(COLLAPSED_CLASS).addClass(EXPANDED_CLASS);
             } else {
                 $toggle.parent('li').removeClass(EXPANDED_CLASS).addClass(COLLAPSED_CLASS);
+            }
+        });
+    }
+
+    function addKeyBoardNav($tree) {
+        $tree.find('li').attr('tabindex','0');
+        $tree.on('keydown', function(event) {
+            var $currentFocusedElement = $tree.find('li:focus');
+            if (event.which === 40) {
+                $currentFocusedElement.next().focus();
+            } else if (event.which === 38) {
+                $currentFocusedElement.prev().focus();
+            } else if (event.which === 39) {
+                if ($currentFocusedElement.hasClass(COLLAPSED_CLASS)) {
+                    $currentFocusedElement.removeClass(COLLAPSED_CLASS).addClass(EXPANDED_CLASS);
+                }
             }
         });
     }
