@@ -45,15 +45,36 @@
         $tree.on('keydown', function(event) {
             var $currentFocusedElement = $tree.find('li:focus');
             if (event.which === 40) {
-                $currentFocusedElement.next().focus();
+                if ($currentFocusedElement.hasClass(HAS_CHILDREN_CLASS) && $currentFocusedElement.hasClass(EXPANDED_CLASS)) {
+                    $currentFocusedElement.children('ul').find(' > li:nth-child(1)').focus();
+                } else if ($currentFocusedElement.next().length === 0) {
+                    $currentFocusedElement.parent('ul').parent('li').next().focus();
+                } else {
+                    $currentFocusedElement.next().focus();
+                }
             } else if (event.which === 38) {
-                $currentFocusedElement.prev().focus();
+                if (isExpanded($currentFocusedElement.prev())) {
+                    var length = $currentFocusedElement.prev().children('ul').children('li').length;
+                    $currentFocusedElement.prev().children('ul').find(' > li:nth-child(' + length + ')').focus();
+                } else if ($currentFocusedElement.prev().length === 0) {
+                    $currentFocusedElement.parent('ul').parent('li').focus();
+                } else {
+                    $currentFocusedElement.prev().focus();
+                }
             } else if (event.which === 39) {
                 if ($currentFocusedElement.hasClass(COLLAPSED_CLASS)) {
                     $currentFocusedElement.removeClass(COLLAPSED_CLASS).addClass(EXPANDED_CLASS);
                 }
+            } else if (event.which === 37) {
+                if ($currentFocusedElement.hasClass(EXPANDED_CLASS)) {
+                    $currentFocusedElement.removeClass(EXPANDED_CLASS).addClass(COLLAPSED_CLASS);
+                }
             }
         });
+    }
+
+    function isExpanded($item) {
+        return $item.hasClass(EXPANDED_CLASS);
     }
 
     function identifyListItemWithChildren($listItem) {

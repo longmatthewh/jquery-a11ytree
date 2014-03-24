@@ -68,63 +68,129 @@ describe('a11yTree plugin', function () {
         });
 
 
-        describe('can be navigated using the mouse and keyboard', function() {
+        describe('has navigation', function() {
 
-            var $firstLevel1Item, $firstLevel2Item, $secondLevel1Item;
+            var $firstLevel1Item, $firstLevel2Item, $secondLevel1Item, $secondLevel2Item;
 
             beforeEach(function() {
                 $firstLevel1Item = getNthItemInList(LEVEL_1_ID_SELECTOR, 1);
                 $firstLevel2Item = getNthItemInList(LEVEL_2_ID_SELECTOR, 1);
                 $secondLevel1Item = getNthItemInList(LEVEL_1_ID_SELECTOR, 2);
+                $secondLevel2Item = getNthItemInList(LEVEL_2_ID_SELECTOR, 2);
             });
 
-            it('adds each item to the tab order', function() {
-                expect($(LEVEL_1_ID_SELECTOR).find('li[tabindex="0"]').length).toBe($(LEVEL_1_ID_SELECTOR).find(LIST_ITEM_SELECTOR).length);
+            describe('using toggle controls', function() {
+
+                it('adds toggle control to items with children', function () {
+                    expect($(TOGGLE_CLASS_SELECTOR).length).toBe(2);
+                    verifyItemHasToggle($firstLevel1Item);
+                    verifyItemHasToggle($firstLevel2Item);
+                });
+
+                it('clicking collapsed toggle expands only direct children', function () {
+                    $firstLevel1Item.children(TOGGLE_CLASS_SELECTOR).click();
+                    expect($(EXPANDED_CLASS_SELECTOR).length).toBe(1);
+                    isExpanded($firstLevel1Item);
+                });
+
+                it('clicking expanded toggle collapses only direct children', function () {
+                    $firstLevel1Item.children(TOGGLE_CLASS_SELECTOR).click();
+                    $firstLevel2Item.children(TOGGLE_CLASS_SELECTOR).click();
+                    $firstLevel1Item.children(TOGGLE_CLASS_SELECTOR).click();
+
+                    expect($(EXPANDED_CLASS_SELECTOR).length).toBe(1);
+                    expect($(COLLAPSED_CLASS_SELECTOR).length).toBe(1);
+                    isCollapsed($firstLevel1Item);
+                    isExpanded($firstLevel2Item);
+                });
+
             });
 
-            it('adds toggle control to items with children', function () {
-                expect($(TOGGLE_CLASS_SELECTOR).length).toBe(2);
-                verifyItemHasToggle($firstLevel1Item);
-                verifyItemHasToggle($firstLevel2Item);
-            });
+            describe('using the keyboard', function() {
 
-            it('clicking collapsed toggle expands only direct children', function () {
-                $firstLevel1Item.children(TOGGLE_CLASS_SELECTOR).click();
-                expect($(EXPANDED_CLASS_SELECTOR).length).toBe(1);
-                isExpanded($firstLevel1Item);
-            });
+                it('adds each item to the tab order', function() {
+                    expect($(LEVEL_1_ID_SELECTOR).find('li[tabindex="0"]').length).toBe($(LEVEL_1_ID_SELECTOR).find(LIST_ITEM_SELECTOR).length);
+                });
 
-            it('clicking expanded toggle collapses only direct children', function () {
-                $firstLevel1Item.children(TOGGLE_CLASS_SELECTOR).click();
-                $firstLevel2Item.children(TOGGLE_CLASS_SELECTOR).click();
-                $firstLevel1Item.children(TOGGLE_CLASS_SELECTOR).click();
+                describe('using the down arrow key', function() {
 
-                expect($(EXPANDED_CLASS_SELECTOR).length).toBe(1);
-                expect($(COLLAPSED_CLASS_SELECTOR).length).toBe(1);
-                isCollapsed($firstLevel1Item);
-                isExpanded($firstLevel2Item);
-            });
+                    it('focuses on the next sibling item in the tree if current item in focus is collapsed or has no children', function() {
+                        $firstLevel1Item.focus();
+                        triggerKeydown(40);
+                        expect($(LEVEL_1_ID_SELECTOR + ' > :focus').length).toBe(1);
+                        expect($secondLevel1Item.is(':focus')).toBe(true);
+                    });
 
-            it('pressing the down arrow key focuses on the next expanded element in the tree', function() {
-                $firstLevel1Item.focus();
-                triggerKeydown(40);
-                expect($(LEVEL_1_ID_SELECTOR + ' > :focus').length).toBe(1);
-                expect($secondLevel1Item.is(':focus')).toBe(true);
-            });
+                    it('focuses on first child item in the tree if current item in focus has children and is expanded', function() {
+                        $firstLevel1Item.focus();
+                        triggerKeydown(39);
+                        triggerKeydown(40);
+                        expect($(LEVEL_2_ID_SELECTOR + ' > :focus').length).toBe(1);
+                        expect($firstLevel2Item.is(':focus')).toBe(true);
+                    });
 
-            it('pressing the up arrow key focuses on the previous expanded element in the tree', function() {
-                $secondLevel1Item.focus();
-                triggerKeydown(38);
-                expect($(LEVEL_1_ID_SELECTOR + ' > :focus').length).toBe(1);
-                expect($firstLevel1Item.is(':focus')).toBe(true);
-            });
+                    it('focuses on next parent item in the tree if current item is the last child item of the sibling parent', function() {
+                        $firstLevel1Item.focus();
+                        triggerKeydown(39);
+                        triggerKeydown(40);
+                        triggerKeydown(40);
+                        triggerKeydown(40);
+                        expect($(LEVEL_1_ID_SELECTOR + ' > :focus').length).toBe(1);
+                        expect($secondLevel1Item.is(':focus')).toBe(true);
+                    });
 
-            it('pressing the right arrow key expands the child list when exists in the tree', function() {
-                $firstLevel1Item.focus();
-                triggerKeydown(39);
-                expect($(LEVEL_1_ID_SELECTOR + ' > :focus').length).toBe(1);
-                expect($firstLevel1Item.is(':focus')).toBe(true);
-                expect($firstLevel1Item.hasClass(EXPANDED_CLASS)).toBe(true);
+                });
+
+                describe('using the up arrow key', function() {
+
+                    it('focuses on the previous sibling element in the tree if the previous sibling is collapsed or has no children', function() {
+                        $secondLevel1Item.focus();
+                        triggerKeydown(38);
+                        expect($(LEVEL_1_ID_SELECTOR + ' > :focus').length).toBe(1);
+                        expect($firstLevel1Item.is(':focus')).toBe(true);
+                    });
+
+                    it('focuses on the last child item of the previous sibling in the tree if the previous sibling has children and is expanded', function() {
+                        $firstLevel1Item.focus();
+                        triggerKeydown(39);
+                        triggerKeydown(40);
+                        triggerKeydown(40);
+                        triggerKeydown(40);
+                        triggerKeydown(40);
+                        triggerKeydown(38);
+                        expect($(LEVEL_2_ID_SELECTOR + ' > :focus').length).toBe(1);
+                        expect($secondLevel2Item.is(':focus')).toBe(true);
+                    });
+
+                    it('focuses on the parent if the item in focus is the first child of an item', function() {
+                        $firstLevel1Item.focus();
+                        triggerKeydown(39);
+                        triggerKeydown(40);
+                        triggerKeydown(38);
+                        expect($(LEVEL_1_ID_SELECTOR + ' > :focus').length).toBe(1);
+                        expect($firstLevel1Item.is(':focus')).toBe(true);
+                    });
+                });
+
+                it('pressing the right arrow key expands the child list when exists in the tree', function() {
+                    $firstLevel1Item.focus();
+                    triggerKeydown(39);
+                    expect($(LEVEL_1_ID_SELECTOR + ' > :focus').length).toBe(1);
+                    expect($firstLevel1Item.is(':focus')).toBe(true);
+                    expect($firstLevel1Item.hasClass(EXPANDED_CLASS)).toBe(true);
+                    expect($firstLevel1Item.hasClass(COLLAPSED_CLASS)).toBe(false);
+                });
+
+                it('pressing the left arrow key collapses the child list when exists in the tree', function() {
+                    $firstLevel1Item.focus();
+                    triggerKeydown(39);
+                    triggerKeydown(37);
+                    expect($(LEVEL_1_ID_SELECTOR + ' > :focus').length).toBe(1);
+                    expect($firstLevel1Item.is(':focus')).toBe(true);
+                    expect($firstLevel1Item.hasClass(COLLAPSED_CLASS)).toBe(true);
+                    expect($firstLevel1Item.hasClass(EXPANDED_CLASS)).toBe(false);
+                });
+
             });
         });
     });
