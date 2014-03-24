@@ -202,13 +202,14 @@ describe('a11yTree plugin', function () {
                         expect($firstLevel1Item.hasClass(EXPANDED_CLASS)).toBe(false);
                     });
 
-                    it('focuses on the parent item in a list when item in focus is the first child in a list', function() {
+                    it('focuses on the parent item if current item in list has no children', function() {
                         $firstLevel1Item.focus();
                         triggerKeydown(39);
                         triggerKeydown(39);
+                        triggerKeydown(39);
                         triggerKeydown(37);
-                        expect($(LEVEL_1_ID_SELECTOR + ' > :focus').length).toBe(1);
-                        expect($firstLevel1Item.is(':focus')).toBe(true);
+                        expect($(LEVEL_2_ID_SELECTOR + ' > :focus').length).toBe(1);
+                        expect($firstLevel2Item.is(':focus')).toBe(true);
                     });
                 });
 

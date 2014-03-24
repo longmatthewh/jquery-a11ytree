@@ -70,7 +70,7 @@
             } else if (event.which === 37) {
                 if ($currentFocusedElement.hasClass(EXPANDED_CLASS)) {
                     $currentFocusedElement.removeClass(EXPANDED_CLASS).addClass(COLLAPSED_CLASS);
-                } else if ($currentFocusedElement.hasClass(COLLAPSED_CLASS)) {
+                } else {
                     $currentFocusedElement.parent('ul').parent('li').focus();
                 }
             }
