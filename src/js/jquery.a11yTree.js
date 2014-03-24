@@ -8,14 +8,11 @@
     var EXPANDED_CLASS = 'expanded';
 
     defaults = {
-        initShow: true,
-        buttonShow: undefined,
-        buttonHide: undefined
     };
 
     function Plugin( element, options ) {
         this.element = element;
-        this.options = $.extend( {}, defaults, options) ;
+        this.options = $.extend( {}, defaults, options);
         this._defaults = defaults;
         this.init();
     }
@@ -45,36 +42,52 @@
         $tree.on('keydown', function(event) {
             var $currentFocusedElement = $tree.find('li:focus');
             if (event.which === 40) {
-                if (hasChildren($currentFocusedElement) && isExpanded($currentFocusedElement)) {
-                    focusOn(findFirstChild($currentFocusedElement));
-                } else if ($currentFocusedElement.next().length === 0) {
-                    focusOn(findParent($currentFocusedElement).next());
-                } else {
-                    focusOn($currentFocusedElement.next());
-                }
+                handleDownArrowKey($currentFocusedElement);
             } else if (event.which === 38) {
-                if (isExpanded($currentFocusedElement.prev())) {
-                    var $previousSiblingList = $currentFocusedElement.prev().children('ul');
-                    focusOn(findLastChild($previousSiblingList).focus());
-                } else if ($currentFocusedElement.prev().length === 0) {
-                    focusOn(findParent($currentFocusedElement));
-                } else {
-                    focusOn($currentFocusedElement.prev());
-                }
+                handleUpArrowKey($currentFocusedElement);
             } else if (event.which === 39) {
-                if (isCollapsed($currentFocusedElement)) {
-                    expand($currentFocusedElement);
-                } else if (isExpanded($currentFocusedElement)) {
-                    focusOn(findFirstChild($currentFocusedElement));
-                }
+                handleRightArrowKey($currentFocusedElement);
             } else if (event.which === 37) {
-                if (isExpanded($currentFocusedElement)) {
-                    collapse($currentFocusedElement);
-                } else {
-                    focusOn(findParent($currentFocusedElement));
-                }
+                handleLeftArrowKey($currentFocusedElement);
             }
         });
+    }
+
+    function handleLeftArrowKey($item) {
+        if (isExpanded($item)) {
+            collapse($item);
+        } else {
+            focusOn(findParent($item));
+        }
+    }
+
+    function handleRightArrowKey($item) {
+        if (isCollapsed($item)) {
+            expand($item);
+        } else if (isExpanded($item)) {
+            focusOn(findFirstChild($item));
+        }
+    }
+
+    function handleUpArrowKey($item) {
+        if (isExpanded($item.prev())) {
+            var $previousSiblingList = $item.prev().children('ul');
+            focusOn(findLastChild($previousSiblingList).focus());
+        } else if ($item.prev().length === 0) {
+            focusOn(findParent($item));
+        } else {
+            focusOn($item.prev());
+        }
+    }
+
+    function handleDownArrowKey($item) {
+        if (hasChildren($item) && isExpanded($item)) {
+            focusOn(findFirstChild($item));
+        } else if ($item.next().length === 0) {
+            focusOn(findParent($item).next());
+        } else {
+            focusOn($item.next());
+        }
     }
 
     function hasChildren($item) {
