@@ -117,16 +117,14 @@ describe('a11yTree plugin', function () {
                     it('focuses on the next sibling item in the tree if current item in focus is collapsed or has no children', function() {
                         $firstLevel1Item.focus();
                         triggerKeydown(40);
-                        expect($(LEVEL_1_ID_SELECTOR + ' > :focus').length).toBe(1);
-                        expect($secondLevel1Item.is(':focus')).toBe(true);
+                        isOnlyItemInFocus($secondLevel1Item);
                     });
 
                     it('focuses on first child item in the tree if current item in focus has children and is expanded', function() {
                         $firstLevel1Item.focus();
                         triggerKeydown(39);
                         triggerKeydown(40);
-                        expect($(LEVEL_2_ID_SELECTOR + ' > :focus').length).toBe(1);
-                        expect($firstLevel2Item.is(':focus')).toBe(true);
+                        isOnlyItemInFocus($firstLevel2Item);
                     });
 
                     it('focuses on next parent item in the tree if current item is the last child item of the sibling parent', function() {
@@ -135,8 +133,7 @@ describe('a11yTree plugin', function () {
                         triggerKeydown(40);
                         triggerKeydown(40);
                         triggerKeydown(40);
-                        expect($(LEVEL_1_ID_SELECTOR + ' > :focus').length).toBe(1);
-                        expect($secondLevel1Item.is(':focus')).toBe(true);
+                        isOnlyItemInFocus($secondLevel1Item);
                     });
 
                 });
@@ -146,8 +143,7 @@ describe('a11yTree plugin', function () {
                     it('focuses on the previous sibling element in the tree if the previous sibling is collapsed or has no children', function() {
                         $secondLevel1Item.focus();
                         triggerKeydown(38);
-                        expect($(LEVEL_1_ID_SELECTOR + ' > :focus').length).toBe(1);
-                        expect($firstLevel1Item.is(':focus')).toBe(true);
+                        isOnlyItemInFocus($firstLevel1Item);
                     });
 
                     it('focuses on the last child item of the previous sibling in the tree if the previous sibling has children and is expanded', function() {
@@ -158,8 +154,7 @@ describe('a11yTree plugin', function () {
                         triggerKeydown(40);
                         triggerKeydown(40);
                         triggerKeydown(38);
-                        expect($(LEVEL_2_ID_SELECTOR + ' > :focus').length).toBe(1);
-                        expect($secondLevel2Item.is(':focus')).toBe(true);
+                        isOnlyItemInFocus($secondLevel2Item);
                     });
 
                     it('focuses on the parent if the item in focus is the first child of an item', function() {
@@ -167,8 +162,7 @@ describe('a11yTree plugin', function () {
                         triggerKeydown(39);
                         triggerKeydown(40);
                         triggerKeydown(38);
-                        expect($(LEVEL_1_ID_SELECTOR + ' > :focus').length).toBe(1);
-                        expect($firstLevel1Item.is(':focus')).toBe(true);
+                        isOnlyItemInFocus($firstLevel1Item);
                     });
                 });
 
@@ -176,18 +170,15 @@ describe('a11yTree plugin', function () {
                     it('expands the child list when exists in the tree', function() {
                         $firstLevel1Item.focus();
                         triggerKeydown(39);
-                        expect($(LEVEL_1_ID_SELECTOR + ' > :focus').length).toBe(1);
-                        expect($firstLevel1Item.is(':focus')).toBe(true);
-                        expect($firstLevel1Item.hasClass(EXPANDED_CLASS)).toBe(true);
-                        expect($firstLevel1Item.hasClass(COLLAPSED_CLASS)).toBe(false);
+                        isOnlyItemInFocus($firstLevel1Item);
+                        isExpanded($firstLevel1Item);
                     });
 
                     it('focuses on the first child in a list when exists', function() {
                         $firstLevel1Item.focus();
                         triggerKeydown(39);
                         triggerKeydown(39);
-                        expect($(LEVEL_2_ID_SELECTOR + ' > :focus').length).toBe(1);
-                        expect($firstLevel2Item.is(':focus')).toBe(true);
+                        isOnlyItemInFocus($firstLevel2Item);
                     });
                 });
 
@@ -196,10 +187,8 @@ describe('a11yTree plugin', function () {
                         $firstLevel1Item.focus();
                         triggerKeydown(39);
                         triggerKeydown(37);
-                        expect($(LEVEL_1_ID_SELECTOR + ' > :focus').length).toBe(1);
-                        expect($firstLevel1Item.is(':focus')).toBe(true);
-                        expect($firstLevel1Item.hasClass(COLLAPSED_CLASS)).toBe(true);
-                        expect($firstLevel1Item.hasClass(EXPANDED_CLASS)).toBe(false);
+                        isOnlyItemInFocus($firstLevel1Item);
+                        isCollapsed($firstLevel1Item);
                     });
 
                     it('focuses on the parent item if current item in list has no children', function() {
@@ -208,8 +197,7 @@ describe('a11yTree plugin', function () {
                         triggerKeydown(39);
                         triggerKeydown(39);
                         triggerKeydown(37);
-                        expect($(LEVEL_2_ID_SELECTOR + ' > :focus').length).toBe(1);
-                        expect($firstLevel2Item.is(':focus')).toBe(true);
+                        isOnlyItemInFocus($firstLevel2Item);
                     });
                 });
 
@@ -217,11 +205,15 @@ describe('a11yTree plugin', function () {
         });
     });
 
-
     function triggerKeydown(key) {
         var event = jQuery.Event('keydown');
         event.which = key;
         $(LEVEL_1_ID_SELECTOR).trigger(event);
+    }
+
+    function isOnlyItemInFocus($item) {
+        expect($(MAIN_SELECTOR + ' :focus').length).toBe(1);
+        expect($item.is(':focus')).toBe(true);
     }
 
     function getNthItemInList(listSelector, idx) {

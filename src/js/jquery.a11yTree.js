@@ -28,7 +28,7 @@
 
     function addToggleClick($tree) {
         $tree.find('.toggle').on('click', function() {
-            var $listWithToggle = $(this).parent('li');
+            var $listWithToggle = $(this).parent(LIST_ITEM_SELECTOR);
             if (isCollapsed($listWithToggle)) {
                 expand($listWithToggle);
             } else {
@@ -38,7 +38,7 @@
     }
 
     function addKeyBoardNav($tree) {
-        $tree.find('li').attr('tabindex','0');
+        $tree.find(LIST_ITEM_SELECTOR).attr('tabindex','0');
         $tree.on('keydown', function(event) {
             var $currentFocusedElement = $tree.find('li:focus');
             if (event.which === 40) {
@@ -71,7 +71,7 @@
 
     function handleUpArrowKey($item) {
         if (isExpanded($item.prev())) {
-            var $previousSiblingList = $item.prev().children('ul');
+            var $previousSiblingList = $item.prev().children(LIST_SELECTOR);
             focusOn(findLastChild($previousSiblingList).focus());
         } else if ($item.prev().length === 0) {
             focusOn(findParent($item));
@@ -107,7 +107,7 @@
     }
 
     function findParent($item) {
-        return $item.parent('ul').parent('li');
+        return $item.parent(LIST_SELECTOR).parent(LIST_ITEM_SELECTOR);
     }
 
     function findLastChild($list) {
@@ -115,7 +115,7 @@
     }
 
     function findFirstChild($item) {
-        return $item.children('ul').find(' > li:nth-child(1)');
+        return $item.children(LIST_SELECTOR).find(' > li:nth-child(1)');
     }
 
     function isExpanded($item) {
