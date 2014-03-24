@@ -31,11 +31,11 @@
 
     function addToggleClick($tree) {
         $tree.find('.toggle').on('click', function() {
-            var $toggle = $(this);
-            if ($toggle.parent('li').hasClass(COLLAPSED_CLASS)) {
-                $toggle.parent('li').removeClass(COLLAPSED_CLASS).addClass(EXPANDED_CLASS);
+            var $listWithToggle = $(this).parent('li');
+            if (isCollapsed($listWithToggle)) {
+                expand($listWithToggle);
             } else {
-                $toggle.parent('li').removeClass(EXPANDED_CLASS).addClass(COLLAPSED_CLASS);
+                collapse($listWithToggle);
             }
         });
     }
@@ -45,40 +45,72 @@
         $tree.on('keydown', function(event) {
             var $currentFocusedElement = $tree.find('li:focus');
             if (event.which === 40) {
-                if ($currentFocusedElement.hasClass(HAS_CHILDREN_CLASS) && $currentFocusedElement.hasClass(EXPANDED_CLASS)) {
-                    $currentFocusedElement.children('ul').find(' > li:nth-child(1)').focus();
+                if (hasChildren($currentFocusedElement) && isExpanded($currentFocusedElement)) {
+                    focusOn(findFirstChild($currentFocusedElement));
                 } else if ($currentFocusedElement.next().length === 0) {
-                    $currentFocusedElement.parent('ul').parent('li').next().focus();
+                    focusOn(findParent($currentFocusedElement).next());
                 } else {
-                    $currentFocusedElement.next().focus();
+                    focusOn($currentFocusedElement.next());
                 }
             } else if (event.which === 38) {
                 if (isExpanded($currentFocusedElement.prev())) {
-                    var length = $currentFocusedElement.prev().children('ul').children('li').length;
-                    $currentFocusedElement.prev().children('ul').find(' > li:nth-child(' + length + ')').focus();
+                    var $previousSiblingList = $currentFocusedElement.prev().children('ul');
+                    focusOn(findLastChild($previousSiblingList).focus());
                 } else if ($currentFocusedElement.prev().length === 0) {
-                    $currentFocusedElement.parent('ul').parent('li').focus();
+                    focusOn(findParent($currentFocusedElement));
                 } else {
-                    $currentFocusedElement.prev().focus();
+                    focusOn($currentFocusedElement.prev());
                 }
             } else if (event.which === 39) {
-                if ($currentFocusedElement.hasClass(COLLAPSED_CLASS)) {
-                    $currentFocusedElement.removeClass(COLLAPSED_CLASS).addClass(EXPANDED_CLASS);
-                } else if ($currentFocusedElement.hasClass(EXPANDED_CLASS)) {
-                    $currentFocusedElement.children('ul').find(' > li:nth-child(1)').focus();
+                if (isCollapsed($currentFocusedElement)) {
+                    expand($currentFocusedElement);
+                } else if (isExpanded($currentFocusedElement)) {
+                    focusOn(findFirstChild($currentFocusedElement));
                 }
             } else if (event.which === 37) {
-                if ($currentFocusedElement.hasClass(EXPANDED_CLASS)) {
-                    $currentFocusedElement.removeClass(EXPANDED_CLASS).addClass(COLLAPSED_CLASS);
+                if (isExpanded($currentFocusedElement)) {
+                    collapse($currentFocusedElement);
                 } else {
-                    $currentFocusedElement.parent('ul').parent('li').focus();
+                    focusOn(findParent($currentFocusedElement));
                 }
             }
         });
     }
 
+    function hasChildren($item) {
+        return $item.hasClass(HAS_CHILDREN_CLASS);
+    }
+
+    function focusOn($item) {
+        $item.focus();
+    }
+
+    function expand($item) {
+        $item.removeClass(COLLAPSED_CLASS).addClass(EXPANDED_CLASS);
+    }
+
+    function collapse($item) {
+        $item.removeClass(EXPANDED_CLASS).addClass(COLLAPSED_CLASS);
+    }
+
+    function findParent($item) {
+        return $item.parent('ul').parent('li');
+    }
+
+    function findLastChild($list) {
+        return $list.find(' > li:last-child');
+    }
+
+    function findFirstChild($item) {
+        return $item.children('ul').find(' > li:nth-child(1)');
+    }
+
     function isExpanded($item) {
         return $item.hasClass(EXPANDED_CLASS);
+    }
+
+    function isCollapsed($item) {
+        return $item.hasClass(COLLAPSED_CLASS);
     }
 
     function identifyListItemWithChildren($listItem) {
