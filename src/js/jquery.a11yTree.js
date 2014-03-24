@@ -64,10 +64,14 @@
             } else if (event.which === 39) {
                 if ($currentFocusedElement.hasClass(COLLAPSED_CLASS)) {
                     $currentFocusedElement.removeClass(COLLAPSED_CLASS).addClass(EXPANDED_CLASS);
+                } else if ($currentFocusedElement.hasClass(EXPANDED_CLASS)) {
+                    $currentFocusedElement.children('ul').find(' > li:nth-child(1)').focus();
                 }
             } else if (event.which === 37) {
                 if ($currentFocusedElement.hasClass(EXPANDED_CLASS)) {
                     $currentFocusedElement.removeClass(EXPANDED_CLASS).addClass(COLLAPSED_CLASS);
+                } else if ($currentFocusedElement.hasClass(COLLAPSED_CLASS)) {
+                    $currentFocusedElement.parent('ul').parent('li').focus();
                 }
             }
         });

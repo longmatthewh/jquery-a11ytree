@@ -172,23 +172,44 @@ describe('a11yTree plugin', function () {
                     });
                 });
 
-                it('pressing the right arrow key expands the child list when exists in the tree', function() {
-                    $firstLevel1Item.focus();
-                    triggerKeydown(39);
-                    expect($(LEVEL_1_ID_SELECTOR + ' > :focus').length).toBe(1);
-                    expect($firstLevel1Item.is(':focus')).toBe(true);
-                    expect($firstLevel1Item.hasClass(EXPANDED_CLASS)).toBe(true);
-                    expect($firstLevel1Item.hasClass(COLLAPSED_CLASS)).toBe(false);
+                describe('using the right arrow key', function() {
+                    it('expands the child list when exists in the tree', function() {
+                        $firstLevel1Item.focus();
+                        triggerKeydown(39);
+                        expect($(LEVEL_1_ID_SELECTOR + ' > :focus').length).toBe(1);
+                        expect($firstLevel1Item.is(':focus')).toBe(true);
+                        expect($firstLevel1Item.hasClass(EXPANDED_CLASS)).toBe(true);
+                        expect($firstLevel1Item.hasClass(COLLAPSED_CLASS)).toBe(false);
+                    });
+
+                    it('focuses on the first child in a list when exists', function() {
+                        $firstLevel1Item.focus();
+                        triggerKeydown(39);
+                        triggerKeydown(39);
+                        expect($(LEVEL_2_ID_SELECTOR + ' > :focus').length).toBe(1);
+                        expect($firstLevel2Item.is(':focus')).toBe(true);
+                    });
                 });
 
-                it('pressing the left arrow key collapses the child list when exists in the tree', function() {
-                    $firstLevel1Item.focus();
-                    triggerKeydown(39);
-                    triggerKeydown(37);
-                    expect($(LEVEL_1_ID_SELECTOR + ' > :focus').length).toBe(1);
-                    expect($firstLevel1Item.is(':focus')).toBe(true);
-                    expect($firstLevel1Item.hasClass(COLLAPSED_CLASS)).toBe(true);
-                    expect($firstLevel1Item.hasClass(EXPANDED_CLASS)).toBe(false);
+                describe('using the right arrow key', function() {
+                    it('collapses the child list when exists in the tree', function() {
+                        $firstLevel1Item.focus();
+                        triggerKeydown(39);
+                        triggerKeydown(37);
+                        expect($(LEVEL_1_ID_SELECTOR + ' > :focus').length).toBe(1);
+                        expect($firstLevel1Item.is(':focus')).toBe(true);
+                        expect($firstLevel1Item.hasClass(COLLAPSED_CLASS)).toBe(true);
+                        expect($firstLevel1Item.hasClass(EXPANDED_CLASS)).toBe(false);
+                    });
+
+                    it('focuses on the parent item in a list when item in focus is the first child in a list', function() {
+                        $firstLevel1Item.focus();
+                        triggerKeydown(39);
+                        triggerKeydown(39);
+                        triggerKeydown(37);
+                        expect($(LEVEL_1_ID_SELECTOR + ' > :focus').length).toBe(1);
+                        expect($firstLevel1Item.is(':focus')).toBe(true);
+                    });
                 });
 
             });
