@@ -1,11 +1,14 @@
 ;(function ( $, window, document, undefined ) {
     var PLUGIN_NAME = 'a11yTree';
+    var PLUGIN_PREFIX = 'plugin_';
     var LIST_SELECTOR = 'ul', LIST_ITEM_SELECTOR = 'li';
+    var TABINDEX_ATTR_NAME = 'tabindex', TABINDEX_0 = '0';
+    var KEYDOWN_EVENT = 'keydown', CLICK_EVENT = 'click';
     var ROLE_ATTR_NAME = 'role', ARIA_LEVEL_ATTR_NAME = 'aria-level';
     var ARIA_TREE_ROLE = 'tree', ARIA_TREEITEM_ROLE = 'treeitem', ARIA_GROUP_ROLE = 'group';
     var HAS_CHILDREN_CLASS = 'has-children', NO_CHILDREN_CLASS = 'no-children';
-    var COLLAPSED_CLASS = 'collapsed';
-    var EXPANDED_CLASS = 'expanded';
+    var COLLAPSED_CLASS = 'collapsed', EXPANDED_CLASS = 'expanded';
+    var TOGGLE_CLASS = 'toggle', TOGGLE_CLASS_SELECTOR = '.' + TOGGLE_CLASS;
 
     defaults = {
     };
@@ -27,7 +30,7 @@
     };
 
     function addToggleClick($tree) {
-        $tree.find('.toggle').on('click', function() {
+        $tree.find(TOGGLE_CLASS_SELECTOR).on(CLICK_EVENT, function() {
             var $listWithToggle = $(this).parent(LIST_ITEM_SELECTOR);
             if (isCollapsed($listWithToggle)) {
                 expand($listWithToggle);
@@ -38,8 +41,8 @@
     }
 
     function addKeyBoardNav($tree) {
-        $tree.find(LIST_ITEM_SELECTOR).attr('tabindex','0');
-        $tree.on('keydown', function(event) {
+        $tree.find(LIST_ITEM_SELECTOR).attr(TABINDEX_ATTR_NAME, TABINDEX_0);
+        $tree.on(KEYDOWN_EVENT, function(event) {
             var $currentFocusedElement = $tree.find('li:focus');
             if (event.which === 40) {
                 handleDownArrowKey($currentFocusedElement);
@@ -128,7 +131,7 @@
 
     function identifyListItemWithChildren($listItem) {
         $listItem.addClass(HAS_CHILDREN_CLASS).addClass(COLLAPSED_CLASS);
-        $listItem.prepend('<div class="toggle" aria-hidden="true"></div>');
+        $listItem.prepend('<div class="' + TOGGLE_CLASS + '" aria-hidden="true"></div>');
     }
 
     function identifySubChildren($listItem, nestingLevel) {
@@ -152,8 +155,8 @@
 
     $.fn[PLUGIN_NAME] = function ( options ) {
         return this.each(function () {
-            if (!$.data(this, 'plugin_' + PLUGIN_NAME)) {
-                $.data(this, 'plugin_' + PLUGIN_NAME,
+            if (!$.data(this, PLUGIN_PREFIX + PLUGIN_NAME)) {
+                $.data(this, PLUGIN_PREFIX + PLUGIN_NAME,
                     new Plugin( this, options ));
             }
         });

@@ -149,10 +149,7 @@ describe('a11yTree plugin', function () {
                     it('focuses on the last child item of the previous sibling in the tree if the previous sibling has children and is expanded', function() {
                         $firstLevel1Item.focus();
                         triggerKeydown(39);
-                        triggerKeydown(40);
-                        triggerKeydown(40);
-                        triggerKeydown(40);
-                        triggerKeydown(40);
+                        $secondLevel1Item.focus();
                         triggerKeydown(38);
                         isOnlyItemInFocus($secondLevel2Item);
                     });
