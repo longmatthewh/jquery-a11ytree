@@ -7,7 +7,6 @@
     var ROLE_ATTR_NAME = 'role', ARIA_LEVEL_ATTR_NAME = 'aria-level';
     var ARIA_TREE_ROLE = 'tree', ARIA_TREEITEM_ROLE = 'treeitem', ARIA_GROUP_ROLE = 'group';
     var HAS_CHILDREN_CLASS = 'has-children', NO_CHILDREN_CLASS = 'no-children';
-    var COLLAPSED_CLASS = 'collapsed', EXPANDED_CLASS = 'expanded';
     var TOGGLE_CLASS = 'toggle', TOGGLE_CLASS_SELECTOR = '.' + TOGGLE_CLASS;
 
     defaults = {
@@ -110,11 +109,19 @@
     }
 
     function expand($item) {
-        $item.removeClass(COLLAPSED_CLASS).addClass(EXPANDED_CLASS);
+        $item.attr('aria-expanded','true');
     }
 
     function collapse($item) {
-        $item.removeClass(EXPANDED_CLASS).addClass(COLLAPSED_CLASS);
+        $item.attr('aria-expanded','false');
+    }
+
+    function isExpanded($item) {
+        return $item.attr('aria-expanded') === 'true';
+    }
+
+    function isCollapsed($item) {
+        return $item.attr('aria-expanded') === 'false';
     }
 
     function findParent($item) {
@@ -129,16 +136,8 @@
         return $item.children(LIST_SELECTOR).find(' > li:nth-child(1)');
     }
 
-    function isExpanded($item) {
-        return $item.hasClass(EXPANDED_CLASS);
-    }
-
-    function isCollapsed($item) {
-        return $item.hasClass(COLLAPSED_CLASS);
-    }
-
     function identifyListItemWithChildren($listItem) {
-        $listItem.addClass(HAS_CHILDREN_CLASS).addClass(COLLAPSED_CLASS);
+        $listItem.addClass(HAS_CHILDREN_CLASS).attr('aria-expanded','false');
         $listItem.prepend('<div class="' + TOGGLE_CLASS + '" aria-hidden="true"></div>');
     }
 

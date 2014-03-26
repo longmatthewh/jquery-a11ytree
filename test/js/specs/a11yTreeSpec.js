@@ -214,23 +214,19 @@ describe('a11yTree plugin', function () {
     }
 
     function hasItemsCollapsed(numberOfItems) {
-        expect($(COLLAPSED_CLASS_SELECTOR).length).toBe(numberOfItems);
+        expect($('li[aria-expanded="false"]').length).toBe(numberOfItems);
     }
 
     function hasItemsExpanded(numberOfItems) {
-        expect($(EXPANDED_CLASS_SELECTOR).length).toBe(numberOfItems);
+        expect($('li[aria-expanded="true"]').length).toBe(numberOfItems);
     }
 
     function isExpanded($item) {
-        //expect($item.attr('aria-expanded')).toBe(true);
-        expect($item.hasClass(COLLAPSED_CLASS)).toBe(false);
-        expect($item.hasClass(EXPANDED_CLASS)).toBe(true);
+        expect($item.attr('aria-expanded')).toBe('true');
     }
 
     function isCollapsed($item) {
-        //expect($item.attr('aria-expanded')).toBe(false);
-        expect($item.hasClass(COLLAPSED_CLASS)).toBe(true);
-        expect($item.hasClass(EXPANDED_CLASS)).toBe(false);
+        expect($item.attr('aria-expanded')).toBe('false');
     }
 
     function verifyItemHasToggle($listItem) {
