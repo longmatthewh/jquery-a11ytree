@@ -23,11 +23,11 @@ ul[role="tree"] li {
     line-height: 8px;
 }
 
-.collapsed > .toggle:after {
+li[aria-expanded="false"] > .toggle:after {
     content: "+";
 }
 
-.expanded > .toggle:after {
+li[aria-expanded="true"] > .toggle:after {
     content: "-";
 }
 
@@ -35,10 +35,10 @@ li:focus {
     border:solid 1px #550000;
 }
 
-.collapsed > ul {
+li[aria-expanded="false"] > ul {
     display:none;
 }
 
-.expanded > ul {
+li[aria-expanded="true"] > ul {
     display:block;
 }

@@ -137,7 +137,8 @@
     }
 
     function identifyListItemWithChildren($listItem) {
-        $listItem.addClass(HAS_CHILDREN_CLASS).attr('aria-expanded','false');
+        collapse($listItem);
+        $listItem.addClass(HAS_CHILDREN_CLASS);
         $listItem.prepend('<div class="' + TOGGLE_CLASS + '" aria-hidden="true"></div>');
     }
 
