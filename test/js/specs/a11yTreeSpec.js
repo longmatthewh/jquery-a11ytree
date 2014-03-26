@@ -22,11 +22,17 @@ describe('a11yTree plugin', function () {
         $(MAIN_SELECTOR).remove();
     });
 
-
     describe('used on a parent ul element', function () {
+
+        var $firstLevel1Item, $firstLevel2Item, $secondLevel1Item, $secondLevel2Item;
 
         beforeEach(function () {
             $(LEVEL_1_ID_SELECTOR).a11yTree();
+
+            $firstLevel1Item = getNthItemInList(LEVEL_1_ID_SELECTOR, 1);
+            $firstLevel2Item = getNthItemInList(LEVEL_2_ID_SELECTOR, 1);
+            $secondLevel1Item = getNthItemInList(LEVEL_1_ID_SELECTOR, 2);
+            $secondLevel2Item = getNthItemInList(LEVEL_2_ID_SELECTOR, 2);
         });
 
         it('identifies the parent tree', function () {
@@ -62,22 +68,13 @@ describe('a11yTree plugin', function () {
         });
 
         it('items with children are collapsed by default', function () {
-            expect($(COLLAPSED_CLASS_SELECTOR).length).toBe($(HAS_CHILDREN_CLASS_SELECTOR).length);
-            verifyClassForChildren(LEVEL_1_ID_SELECTOR, 1, COLLAPSED_CLASS);
-            verifyClassForChildren(LEVEL_2_ID_SELECTOR, 1, COLLAPSED_CLASS);
+            hasItemsCollapsed($(HAS_CHILDREN_CLASS_SELECTOR).length);
+            isCollapsed($firstLevel1Item);
+            isCollapsed($firstLevel2Item);
         });
 
 
         describe('has navigation', function() {
-
-            var $firstLevel1Item, $firstLevel2Item, $secondLevel1Item, $secondLevel2Item;
-
-            beforeEach(function() {
-                $firstLevel1Item = getNthItemInList(LEVEL_1_ID_SELECTOR, 1);
-                $firstLevel2Item = getNthItemInList(LEVEL_2_ID_SELECTOR, 1);
-                $secondLevel1Item = getNthItemInList(LEVEL_1_ID_SELECTOR, 2);
-                $secondLevel2Item = getNthItemInList(LEVEL_2_ID_SELECTOR, 2);
-            });
 
             describe('using toggle controls', function() {
 
@@ -89,7 +86,7 @@ describe('a11yTree plugin', function () {
 
                 it('clicking collapsed toggle expands only direct children', function () {
                     $firstLevel1Item.children(TOGGLE_CLASS_SELECTOR).click();
-                    expect($(EXPANDED_CLASS_SELECTOR).length).toBe(1);
+                    hasItemsExpanded(1);
                     isExpanded($firstLevel1Item);
                 });
 
@@ -97,9 +94,8 @@ describe('a11yTree plugin', function () {
                     $firstLevel1Item.children(TOGGLE_CLASS_SELECTOR).click();
                     $firstLevel2Item.children(TOGGLE_CLASS_SELECTOR).click();
                     $firstLevel1Item.children(TOGGLE_CLASS_SELECTOR).click();
-
-                    expect($(EXPANDED_CLASS_SELECTOR).length).toBe(1);
-                    expect($(COLLAPSED_CLASS_SELECTOR).length).toBe(1);
+                    hasItemsCollapsed(1);
+                    hasItemsExpanded(1);
                     isCollapsed($firstLevel1Item);
                     isExpanded($firstLevel2Item);
                 });
@@ -217,12 +213,22 @@ describe('a11yTree plugin', function () {
         return $(listSelector + ' > li:nth-child(' + idx + ')');
     }
 
+    function hasItemsCollapsed(numberOfItems) {
+        expect($(COLLAPSED_CLASS_SELECTOR).length).toBe(numberOfItems);
+    }
+
+    function hasItemsExpanded(numberOfItems) {
+        expect($(EXPANDED_CLASS_SELECTOR).length).toBe(numberOfItems);
+    }
+
     function isExpanded($item) {
+        //expect($item.attr('aria-expanded')).toBe(true);
         expect($item.hasClass(COLLAPSED_CLASS)).toBe(false);
         expect($item.hasClass(EXPANDED_CLASS)).toBe(true);
     }
 
     function isCollapsed($item) {
+        //expect($item.attr('aria-expanded')).toBe(false);
         expect($item.hasClass(COLLAPSED_CLASS)).toBe(true);
         expect($item.hasClass(EXPANDED_CLASS)).toBe(false);
     }

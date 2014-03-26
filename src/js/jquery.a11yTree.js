@@ -41,7 +41,11 @@
     }
 
     function addKeyBoardNav($tree) {
-        $tree.find(LIST_ITEM_SELECTOR).attr(TABINDEX_ATTR_NAME, TABINDEX_0);
+        addTreeItemsToTabOrder($tree);
+        handleArrowKeys($tree);
+    }
+
+    function handleArrowKeys($tree) {
         $tree.on(KEYDOWN_EVENT, function(event) {
             var $currentFocusedElement = $tree.find('li:focus');
             if (event.which === 40) {
@@ -54,6 +58,10 @@
                 handleLeftArrowKey($currentFocusedElement);
             }
         });
+    }
+
+    function addTreeItemsToTabOrder($tree) {
+        $tree.find(LIST_ITEM_SELECTOR).attr(TABINDEX_ATTR_NAME, TABINDEX_0);
     }
 
     function handleLeftArrowKey($item) {
