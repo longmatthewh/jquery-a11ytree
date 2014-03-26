@@ -198,6 +198,21 @@ describe('a11yTree plugin', function () {
         });
     });
 
+    describe('has options', function() {
+        describe('custom.toggle', function() {
+            it('is default to undefined', function() {
+                $(LEVEL_1_ID_SELECTOR).a11yTree();
+                expect($('.default-toggle').length).toBe(2);
+            });
+
+            it('when defined identifies toggle as custom', function() {
+                $(LEVEL_1_ID_SELECTOR).a11yTree({customToggle:{}});
+                expect($('.default-toggle').length).toBe(0);
+                expect($('.custom-toggle').length).toBe(2);
+            });
+        });
+    });
+
     function triggerKeydown(key) {
         var event = jQuery.Event('keydown');
         event.which = key;

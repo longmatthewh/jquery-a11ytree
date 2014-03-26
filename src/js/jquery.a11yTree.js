@@ -10,6 +10,7 @@
     var TOGGLE_CLASS = 'toggle', TOGGLE_CLASS_SELECTOR = '.' + TOGGLE_CLASS;
 
     defaults = {
+        customToggle : undefined
     };
 
     function Plugin( element, options ) {
@@ -23,12 +24,17 @@
         init : function () {
             var $tree = $(this.element);
             identifyChildren($tree, ARIA_TREE_ROLE, 1);
-            addToggleClick($tree);
+            addToggleClick($tree, this.options.customToggle);
             addKeyBoardNav($tree);
         }
     };
 
-    function addToggleClick($tree) {
+    function addToggleClick($tree, customToggle) {
+        var toggleDisplayClass = 'default-toggle';
+        if (customToggle) {
+            toggleDisplayClass = 'custom-toggle';
+        }
+        $tree.find('.has-children').prepend('<div class="' + TOGGLE_CLASS + ' ' + toggleDisplayClass + '" aria-hidden="true"></div>');
         $tree.find(TOGGLE_CLASS_SELECTOR).on(CLICK_EVENT, function() {
             var $listWithToggle = $(this).parent(LIST_ITEM_SELECTOR);
             if (isCollapsed($listWithToggle)) {
@@ -139,7 +145,7 @@
     function identifyListItemWithChildren($listItem) {
         collapse($listItem);
         $listItem.addClass(HAS_CHILDREN_CLASS);
-        $listItem.prepend('<div class="' + TOGGLE_CLASS + '" aria-hidden="true"></div>');
+
     }
 
     function identifySubChildren($listItem, nestingLevel) {
