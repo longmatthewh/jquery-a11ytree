@@ -10,7 +10,11 @@
     var TOGGLE_CLASS = 'toggle', TOGGLE_CLASS_SELECTOR = '.' + TOGGLE_CLASS;
 
     defaults = {
-        customToggle : undefined
+        customToggle : {
+            html : undefined,
+            onExpandCallback : function() {},
+            onCollapseCallback : function() {}
+        }
     };
 
     function Plugin( element, options ) {
@@ -23,149 +27,139 @@
     Plugin.prototype = {
         init : function () {
             var $tree = $(this.element);
-            identifyChildren($tree, ARIA_TREE_ROLE, 1);
-            addToggleClick($tree, this.options.customToggle);
-            addKeyBoardNav($tree);
+            this.identifyChildren($tree, ARIA_TREE_ROLE, 1, this.options.customToggle);
+            this.addToggleClick($tree);
+            this.addKeyBoardNav($tree, this.options.customToggle);
+        },
+        addToggleClick : function($tree) {
+            var self = this;
+            var toggleDisplayClass = 'default-toggle';
+            var toggleHtml = '';
+            if (self.options.customToggle.html) {
+                toggleDisplayClass = 'custom-toggle';
+                toggleHtml = self.options.customToggle.html;
+            }
+            $tree.find('.has-children').prepend('<div class="' + TOGGLE_CLASS + ' ' + toggleDisplayClass + '" aria-hidden="true">' + toggleHtml + '</div>');
+            $tree.find(TOGGLE_CLASS_SELECTOR).on(CLICK_EVENT, function() {
+                var $listWithToggle = $(this).parent(LIST_ITEM_SELECTOR);
+                if (self.isCollapsed($listWithToggle)) {
+                    self.expand($listWithToggle);
+                } else {
+                    self.collapse($listWithToggle);
+                }
+            });
+        },
+        addKeyBoardNav : function($tree) {
+            this.addTreeItemsToTabOrder($tree);
+            this.handleArrowKeys($tree);
+        },
+        handleArrowKeys : function($tree) {
+            var self = this;
+            $tree.on(KEYDOWN_EVENT, function(event) {
+                var $currentFocusedElement = $tree.find('li:focus');
+                if (event.which === 40) {
+                    self.handleDownArrowKey($currentFocusedElement);
+                } else if (event.which === 38) {
+                    self.handleUpArrowKey($currentFocusedElement);
+                } else if (event.which === 39) {
+                    self.handleRightArrowKey($currentFocusedElement);
+                } else if (event.which === 37) {
+                    self.handleLeftArrowKey($currentFocusedElement);
+                }
+            });
+        },
+        addTreeItemsToTabOrder : function($tree) {
+            $tree.find(LIST_ITEM_SELECTOR).attr(TABINDEX_ATTR_NAME, TABINDEX_0);
+        },
+        handleLeftArrowKey : function($item) {
+            if (this.isExpanded($item)) {
+                this.collapse($item);
+            } else {
+                this.focusOn(this.findParent($item));
+            }
+        },
+        handleRightArrowKey : function($item) {
+            if (this.isCollapsed($item)) {
+                this.expand($item);
+            } else if (this.isExpanded($item)) {
+                this.focusOn(this.findFirstChild($item));
+            }
+        },
+        handleUpArrowKey : function($item) {
+            if (this.isExpanded($item.prev())) {
+                var $previousSiblingList = $item.prev().children(LIST_SELECTOR);
+                this.focusOn(this.findLastChild($previousSiblingList).focus());
+            } else if ($item.prev().length === 0) {
+                this.focusOn(this.findParent($item));
+            } else {
+                this.focusOn($item.prev());
+            }
+        },
+        handleDownArrowKey : function($item) {
+            if (this.hasChildren($item) && this.isExpanded($item)) {
+                this.focusOn(this.findFirstChild($item));
+            } else if ($item.next().length === 0) {
+                this.focusOn(this.findParent($item).next());
+            } else {
+                this.focusOn($item.next());
+            }
+        },
+        hasChildren : function($item) {
+            return $item.hasClass(HAS_CHILDREN_CLASS);
+        },
+        focusOn : function($item) {
+            $item.focus();
+        },
+        expand : function($item) {
+            if (this.options.customToggle.onExpandCallback) {
+                this.options.customToggle.onExpandCallback($item);
+            }
+            $item.attr('aria-expanded','true');
+        },
+        collapse : function($item) {
+            if (this.options.customToggle.onCollapseCallback) {
+                this.options.customToggle.onCollapseCallback($item);
+            }
+            $item.attr('aria-expanded','false');
+        },
+        isExpanded : function($item) {
+            return $item.attr('aria-expanded') === 'true';
+        },
+        isCollapsed : function($item) {
+            return $item.attr('aria-expanded') === 'false';
+        },
+        findParent : function($item) {
+            return $item.parent(LIST_SELECTOR).parent(LIST_ITEM_SELECTOR);
+        },
+        findLastChild : function($list) {
+            return $list.find(' > li:last-child');
+        },
+        findFirstChild : function($item) {
+            return $item.children(LIST_SELECTOR).find(' > li:nth-child(1)');
+        },
+        identifyListItemWithChildren : function($listItem) {
+            this.collapse($listItem);
+            $listItem.addClass(HAS_CHILDREN_CLASS);
+        },
+        identifySubChildren : function($listItem, nestingLevel) {
+            var $childList = $listItem.children(LIST_SELECTOR);
+            if ($childList.length > 0) {
+                this.identifyListItemWithChildren($listItem);
+                this.identifyChildren($childList, ARIA_GROUP_ROLE, nestingLevel + 1);
+            } else {
+                $listItem.addClass(NO_CHILDREN_CLASS);
+            }
+        },
+        identifyChildren : function($list, listRole, nestingLevel) {
+            var self = this;
+            $list.attr(ROLE_ATTR_NAME, listRole);
+            var $listItems = $list.children(LIST_ITEM_SELECTOR);
+            $listItems.attr(ROLE_ATTR_NAME,ARIA_TREEITEM_ROLE).attr(ARIA_LEVEL_ATTR_NAME,nestingLevel);
+            $listItems.each(function() {
+                self.identifySubChildren($(this), nestingLevel);
+            });
         }
     };
-
-    function addToggleClick($tree, customToggle) {
-        var toggleDisplayClass = 'default-toggle';
-        if (customToggle) {
-            toggleDisplayClass = 'custom-toggle';
-        }
-        $tree.find('.has-children').prepend('<div class="' + TOGGLE_CLASS + ' ' + toggleDisplayClass + '" aria-hidden="true"></div>');
-        $tree.find(TOGGLE_CLASS_SELECTOR).on(CLICK_EVENT, function() {
-            var $listWithToggle = $(this).parent(LIST_ITEM_SELECTOR);
-            if (isCollapsed($listWithToggle)) {
-                expand($listWithToggle);
-            } else {
-                collapse($listWithToggle);
-            }
-        });
-    }
-
-    function addKeyBoardNav($tree) {
-        addTreeItemsToTabOrder($tree);
-        handleArrowKeys($tree);
-    }
-
-    function handleArrowKeys($tree) {
-        $tree.on(KEYDOWN_EVENT, function(event) {
-            var $currentFocusedElement = $tree.find('li:focus');
-            if (event.which === 40) {
-                handleDownArrowKey($currentFocusedElement);
-            } else if (event.which === 38) {
-                handleUpArrowKey($currentFocusedElement);
-            } else if (event.which === 39) {
-                handleRightArrowKey($currentFocusedElement);
-            } else if (event.which === 37) {
-                handleLeftArrowKey($currentFocusedElement);
-            }
-        });
-    }
-
-    function addTreeItemsToTabOrder($tree) {
-        $tree.find(LIST_ITEM_SELECTOR).attr(TABINDEX_ATTR_NAME, TABINDEX_0);
-    }
-
-    function handleLeftArrowKey($item) {
-        if (isExpanded($item)) {
-            collapse($item);
-        } else {
-            focusOn(findParent($item));
-        }
-    }
-
-    function handleRightArrowKey($item) {
-        if (isCollapsed($item)) {
-            expand($item);
-        } else if (isExpanded($item)) {
-            focusOn(findFirstChild($item));
-        }
-    }
-
-    function handleUpArrowKey($item) {
-        if (isExpanded($item.prev())) {
-            var $previousSiblingList = $item.prev().children(LIST_SELECTOR);
-            focusOn(findLastChild($previousSiblingList).focus());
-        } else if ($item.prev().length === 0) {
-            focusOn(findParent($item));
-        } else {
-            focusOn($item.prev());
-        }
-    }
-
-    function handleDownArrowKey($item) {
-        if (hasChildren($item) && isExpanded($item)) {
-            focusOn(findFirstChild($item));
-        } else if ($item.next().length === 0) {
-            focusOn(findParent($item).next());
-        } else {
-            focusOn($item.next());
-        }
-    }
-
-    function hasChildren($item) {
-        return $item.hasClass(HAS_CHILDREN_CLASS);
-    }
-
-    function focusOn($item) {
-        $item.focus();
-    }
-
-    function expand($item) {
-        $item.attr('aria-expanded','true');
-    }
-
-    function collapse($item) {
-        $item.attr('aria-expanded','false');
-    }
-
-    function isExpanded($item) {
-        return $item.attr('aria-expanded') === 'true';
-    }
-
-    function isCollapsed($item) {
-        return $item.attr('aria-expanded') === 'false';
-    }
-
-    function findParent($item) {
-        return $item.parent(LIST_SELECTOR).parent(LIST_ITEM_SELECTOR);
-    }
-
-    function findLastChild($list) {
-        return $list.find(' > li:last-child');
-    }
-
-    function findFirstChild($item) {
-        return $item.children(LIST_SELECTOR).find(' > li:nth-child(1)');
-    }
-
-    function identifyListItemWithChildren($listItem) {
-        collapse($listItem);
-        $listItem.addClass(HAS_CHILDREN_CLASS);
-
-    }
-
-    function identifySubChildren($listItem, nestingLevel) {
-        var $childList = $listItem.children(LIST_SELECTOR);
-        if ($childList.length > 0) {
-            identifyListItemWithChildren($listItem);
-            identifyChildren($childList, ARIA_GROUP_ROLE, nestingLevel + 1);
-        } else {
-            $listItem.addClass(NO_CHILDREN_CLASS);
-        }
-    }
-
-    function identifyChildren($list, listRole, nestingLevel) {
-        $list.attr(ROLE_ATTR_NAME, listRole);
-        var $listItems = $list.children(LIST_ITEM_SELECTOR);
-        $listItems.attr(ROLE_ATTR_NAME,ARIA_TREEITEM_ROLE).attr(ARIA_LEVEL_ATTR_NAME,nestingLevel);
-        $listItems.each(function() {
-            identifySubChildren($(this), nestingLevel);
-        });
-    }
 
     $.fn[PLUGIN_NAME] = function ( options ) {
         return this.each(function () {

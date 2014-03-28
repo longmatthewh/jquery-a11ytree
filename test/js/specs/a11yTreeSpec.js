@@ -199,16 +199,50 @@ describe('a11yTree plugin', function () {
     });
 
     describe('has options', function() {
-        describe('custom.toggle', function() {
+        describe('customToggle', function() {
             it('is default to undefined', function() {
                 $(LEVEL_1_ID_SELECTOR).a11yTree();
                 expect($('.default-toggle').length).toBe(2);
             });
 
-            it('when defined identifies toggle as custom', function() {
-                $(LEVEL_1_ID_SELECTOR).a11yTree({customToggle:{}});
+            it('identifies toggle as custom when defined', function() {
+                $(LEVEL_1_ID_SELECTOR).a11yTree({customToggle : {html : '<i class="fa fa-plus-square-o"></i>'}});
                 expect($('.default-toggle').length).toBe(0);
                 expect($('.custom-toggle').length).toBe(2);
+            });
+
+            it('inserts custom customToggle.html when defined', function() {
+                $(LEVEL_1_ID_SELECTOR).a11yTree(
+                    {
+                        customToggle:{
+                            html:'<i class="fa fa-plus-square-o"></i>'
+                        }
+                    }
+                );
+                expect($('.custom-toggle').length).toBe(2);
+                expect($('.fa-plus-square-o').length).toBe(2);
+            });
+
+            it('triggers custom toggle collapse when defined', function() {
+                $(LEVEL_1_ID_SELECTOR).a11yTree(
+                    {
+                        customToggle:{
+                            html:'<i class="fa fa-plus-square-o"></i>',
+                            onCollapseCallback: function($toggle) {
+                               $toggle.children('div').find('.fa-minus-square-o').removeClass('fa-minus-square-o').addClass('fa-plus-square-o');
+                            },
+                            onExpandCallback: function($toggle) {
+                               $toggle.children('div').find('.fa-plus-square-o').removeClass('fa-plus-square-o').addClass('fa-minus-square-o');
+                            }
+                        }
+                    }
+                );
+                $firstLevel1Item = getNthItemInList(LEVEL_1_ID_SELECTOR, 1);
+                $firstLevel1Item.focus();
+                triggerKeydown(39);
+                expect($('.fa-minus-square-o').length).toBe(1);
+                triggerKeydown(37);
+                expect($('.fa-minus-square-o').length).toBe(0);
             });
         });
     });
