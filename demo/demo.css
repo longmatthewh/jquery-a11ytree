@@ -11,6 +11,11 @@ ul[role="tree"] li {
     width: 8px;
 }
 
+.custom-toggle {
+    float: left;
+    margin-right: 4px;
+}
+
 .default-toggle {
     border: 1px solid #999999;
     display: inline-block;
@@ -23,11 +28,11 @@ ul[role="tree"] li {
     line-height: 8px;
 }
 
-li[aria-expanded="false"] > .toggle:after {
+li[aria-expanded="false"] > .default-toggle:after {
     content: "+";
 }
 
-li[aria-expanded="true"] > .toggle:after {
+li[aria-expanded="true"] > .default-toggle:after {
     content: "-";
 }
 
