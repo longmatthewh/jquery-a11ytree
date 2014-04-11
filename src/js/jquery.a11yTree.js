@@ -63,12 +63,16 @@
             $tree.on(KEYDOWN_EVENT, function(event) {
                 var $currentFocusedElement = $tree.find('li:focus');
                 if (event.which === 40) {
+                    event.preventDefault();
                     self.handleDownArrowKey($currentFocusedElement);
                 } else if (event.which === 38) {
+                    event.preventDefault();
                     self.handleUpArrowKey($currentFocusedElement);
                 } else if (event.which === 39) {
+                    event.preventDefault();
                     self.handleRightArrowKey($currentFocusedElement);
                 } else if (event.which === 37) {
+                    event.preventDefault();
                     self.handleLeftArrowKey($currentFocusedElement);
                 }
             });
