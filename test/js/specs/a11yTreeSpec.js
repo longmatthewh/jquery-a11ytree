@@ -199,6 +199,22 @@ describe('a11yTree plugin', function () {
     });
 
     describe('has options', function() {
+        describe('insertToggle', function() {
+            it('inserts toggle into list elements with children by default', function() {
+                $(LEVEL_1_ID_SELECTOR).a11yTree();
+                expect($('.default-toggle').length).toBe(2);
+            });
+
+            it('does not insert toggle into DOM when set to false', function() {
+                $(LEVEL_1_ID_SELECTOR).a11yTree(
+                    {
+                        insertToggle : false
+                    }
+                );
+                expect($('.default-toggle').length).toBe(0);
+            });
+        });
+
         describe('customToggle', function() {
             it('is default to undefined', function() {
                 $(LEVEL_1_ID_SELECTOR).a11yTree();
@@ -214,7 +230,7 @@ describe('a11yTree plugin', function () {
             it('inserts custom customToggle.html when defined', function() {
                 $(LEVEL_1_ID_SELECTOR).a11yTree(
                     {
-                        customToggle:{
+                        customToggle :{
                             html:'<i class="fa fa-plus-square-o"></i>'
                         }
                     }
@@ -223,26 +239,39 @@ describe('a11yTree plugin', function () {
                 expect($('.fa-plus-square-o').length).toBe(2);
             });
 
-            it('triggers custom toggle collapse when defined', function() {
+
+        });
+
+        describe('onCollapse and onExpand callbacks', function() {
+            beforeEach(function() {
                 $(LEVEL_1_ID_SELECTOR).a11yTree(
                     {
-                        customToggle:{
-                            html:'<i class="fa fa-plus-square-o"></i>',
-                            onCollapseCallback: function($toggle) {
-                               $toggle.children('div').find('.fa-minus-square-o').removeClass('fa-minus-square-o').addClass('fa-plus-square-o');
-                            },
-                            onExpandCallback: function($toggle) {
-                               $toggle.children('div').find('.fa-plus-square-o').removeClass('fa-plus-square-o').addClass('fa-minus-square-o');
-                            }
+                        customToggle : {
+                            html: '<i class="fa fa-plus-square-o"></i>'
+                        },
+                        onCollapse: function ($toggle) {
+                            $toggle.children('.toggle').find('.fa-minus-square-o').removeClass('fa-minus-square-o').addClass('fa-plus-square-o');
+                        },
+                        onExpand: function ($toggle) {
+                            $toggle.children('.toggle').find('.fa-plus-square-o').removeClass('fa-plus-square-o').addClass('fa-minus-square-o');
                         }
                     }
                 );
                 $firstLevel1Item = getNthItemInList(LEVEL_1_ID_SELECTOR, 1);
                 $firstLevel1Item.focus();
+            });
+
+            it('onCollapse triggers custom toggle collapse when defined', function() {
+                triggerKeydown(39);
+                triggerKeydown(37);
+                expect($('.fa-plus-square-o').length).toBe(2);
+                expect($('.fa-minus-square-o').length).toBe(0);
+            });
+
+            it('onExpand triggers custom toggle expand when defined', function() {
                 triggerKeydown(39);
                 expect($('.fa-minus-square-o').length).toBe(1);
-                triggerKeydown(37);
-                expect($('.fa-minus-square-o').length).toBe(0);
+                expect($('.fa-plus-square-o').length).toBe(1);
             });
         });
     });

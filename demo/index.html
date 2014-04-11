@@ -57,15 +57,16 @@
     <script>
         $('#all-defaults > ul').a11yTree();
         $('#custom-toggle > ul').a11yTree({
-                customToggle : {
-                    html:'<i class="fa fa-plus-square-o"></i>',
-                    onCollapseCallback: function($toggle) {
-                        $toggle.children('div').find('.fa-minus-square-o').removeClass('fa-minus-square-o').addClass('fa-plus-square-o');
-                    },
-                    onExpandCallback: function($toggle) {
-                        $toggle.children('div').find('.fa-plus-square-o').removeClass('fa-plus-square-o').addClass('fa-minus-square-o');
-                    }
-                }
+            customToggle : {
+                html:'<i class="fa fa-plus-square-o"></i>',
+
+            },
+            onCollapse: function($toggle) {
+                $toggle.children('.toggle').find('.fa-minus-square-o').removeClass('fa-minus-square-o').addClass('fa-plus-square-o');
+            },
+            onExpand: function($toggle) {
+                $toggle.children('.toggle').find('.fa-plus-square-o').removeClass('fa-plus-square-o').addClass('fa-minus-square-o');
+            }
         });
     </script>
     </body>

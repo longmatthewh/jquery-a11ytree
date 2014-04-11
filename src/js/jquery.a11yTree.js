@@ -10,11 +10,12 @@
     var TOGGLE_CLASS = 'toggle', TOGGLE_CLASS_SELECTOR = '.' + TOGGLE_CLASS;
 
     defaults = {
+        insertToggle : true,
         customToggle : {
-            html : undefined,
-            onExpandCallback : function() {},
-            onCollapseCallback : function() {}
-        }
+            html : undefined
+        },
+        onExpand : function() {},
+        onCollapse : function() {}
     };
 
     function Plugin( element, options ) {
@@ -27,12 +28,16 @@
     Plugin.prototype = {
         init : function () {
             var $tree = $(this.element);
-            this.identifyChildren($tree, ARIA_TREE_ROLE, 1, this.options.customToggle);
-            this.addToggleClick($tree);
-            this.addKeyBoardNav($tree, this.options.customToggle);
+            this.identifyChildren($tree, ARIA_TREE_ROLE, 1);
+            this.addToggle($tree);
+            this.addKeyBoardNav($tree);
         },
-        addToggleClick : function($tree) {
+        addToggle : function($tree) {
             var self = this;
+            if (self.options.insertToggle === false) {
+                return;
+            }
+
             var toggleDisplayClass = 'default-toggle';
             var toggleHtml = '';
             if (self.options.customToggle.html) {
@@ -111,14 +116,14 @@
             $item.focus();
         },
         expand : function($item) {
-            if (this.options.customToggle.onExpandCallback) {
-                this.options.customToggle.onExpandCallback($item);
+            if (this.options.onExpand) {
+                this.options.onExpand($item);
             }
             $item.attr('aria-expanded','true');
         },
         collapse : function($item) {
-            if (this.options.customToggle.onCollapseCallback) {
-                this.options.customToggle.onCollapseCallback($item);
+            if (this.options.onCollapse) {
+                this.options.onCollapse($item);
             }
             $item.attr('aria-expanded','false');
         },
