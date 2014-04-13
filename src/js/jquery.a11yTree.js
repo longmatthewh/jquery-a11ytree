@@ -6,8 +6,9 @@
     var KEYDOWN_EVENT = 'keydown', CLICK_EVENT = 'click';
     var ROLE_ATTR_NAME = 'role', ARIA_LEVEL_ATTR_NAME = 'aria-level';
     var ARIA_TREE_ROLE = 'tree', ARIA_TREEITEM_ROLE = 'treeitem', ARIA_GROUP_ROLE = 'group';
-    var HAS_CHILDREN_CLASS = 'has-children', NO_CHILDREN_CLASS = 'no-children';
-    var TOGGLE_CLASS = 'toggle', TOGGLE_CLASS_SELECTOR = '.' + TOGGLE_CLASS;
+    var HAS_CHILDREN_CLASS = 'at-has-children', HAS_CHILDREN_CLASS_SELECTOR = '.' + HAS_CHILDREN_CLASS;
+    var NO_CHILDREN_CLASS = 'at-no-children';
+    var TOGGLE_CLASS = 'at-toggle', TOGGLE_CLASS_SELECTOR = '.' + TOGGLE_CLASS;
 
     defaults = {
         insertToggle : true,
@@ -38,13 +39,11 @@
                 return;
             }
 
-            var toggleDisplayClass = 'default-toggle';
             var toggleHtml = '';
             if (self.options.customToggle.html) {
-                toggleDisplayClass = 'custom-toggle';
                 toggleHtml = self.options.customToggle.html;
             }
-            $tree.find('.has-children').prepend('<div class="' + TOGGLE_CLASS + ' ' + toggleDisplayClass + '" aria-hidden="true">' + toggleHtml + '</div>');
+            $tree.find(HAS_CHILDREN_CLASS_SELECTOR).prepend('<div class="' + TOGGLE_CLASS  + '" aria-hidden="true">' + toggleHtml + '</div>');
             $tree.find(TOGGLE_CLASS_SELECTOR).on(CLICK_EVENT, function() {
                 var $listWithToggle = $(this).parent(LIST_ITEM_SELECTOR);
                 if (self.isCollapsed($listWithToggle)) {

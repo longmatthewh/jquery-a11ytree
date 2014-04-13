@@ -4,11 +4,9 @@ describe('a11yTree plugin', function () {
     const LEVEL_1_ID = 'level-1', LEVEL_1_ID_SELECTOR = '#' + LEVEL_1_ID;
     const LEVEL_2_ID = 'level-2', LEVEL_2_ID_SELECTOR = '#' + LEVEL_2_ID;
     const LEVEL_3_ID = 'level-3', LEVEL_3_ID_SELECTOR = '#' + LEVEL_3_ID;
-    const NO_CHILDREN_CLASS = 'no-children', NO_CHILDREN_CLASS_SELECTOR = '.' + NO_CHILDREN_CLASS;
-    const HAS_CHILDREN_CLASS = 'has-children', HAS_CHILDREN_CLASS_SELECTOR = '.' + HAS_CHILDREN_CLASS;
-    const COLLAPSED_CLASS = 'collapsed', COLLAPSED_CLASS_SELECTOR = '.' + COLLAPSED_CLASS;
-    const EXPANDED_CLASS = 'expanded', EXPANDED_CLASS_SELECTOR = '.' + EXPANDED_CLASS;
-    const TOGGLE_CLASS_SELECTOR = '.toggle';
+    const NO_CHILDREN_CLASS = 'at-no-children', NO_CHILDREN_CLASS_SELECTOR = '.' + NO_CHILDREN_CLASS;
+    const HAS_CHILDREN_CLASS = 'at-has-children', HAS_CHILDREN_CLASS_SELECTOR = '.' + HAS_CHILDREN_CLASS;
+    const TOGGLE_CLASS_SELECTOR = '.at-toggle';
 
     beforeEach(function () {
         var htmlContent = '<div id="main"></div>';
@@ -202,7 +200,7 @@ describe('a11yTree plugin', function () {
         describe('insertToggle', function() {
             it('inserts toggle into list elements with children by default', function() {
                 $(LEVEL_1_ID_SELECTOR).a11yTree();
-                expect($('.default-toggle').length).toBe(2);
+                expect($('.at-toggle').length).toBe(2);
             });
 
             it('does not insert toggle into DOM when set to false', function() {
@@ -211,20 +209,14 @@ describe('a11yTree plugin', function () {
                         insertToggle : false
                     }
                 );
-                expect($('.default-toggle').length).toBe(0);
+                expect($('.at-toggle').length).toBe(0);
             });
         });
 
         describe('customToggle', function() {
             it('is default to undefined', function() {
                 $(LEVEL_1_ID_SELECTOR).a11yTree();
-                expect($('.default-toggle').length).toBe(2);
-            });
-
-            it('identifies toggle as custom when defined', function() {
-                $(LEVEL_1_ID_SELECTOR).a11yTree({customToggle : {html : '<i class="fa fa-plus-square-o"></i>'}});
-                expect($('.default-toggle').length).toBe(0);
-                expect($('.custom-toggle').length).toBe(2);
+                expect($('.at-toggle').children().length).toBe(0);
             });
 
             it('inserts custom customToggle.html when defined', function() {
@@ -235,7 +227,6 @@ describe('a11yTree plugin', function () {
                         }
                     }
                 );
-                expect($('.custom-toggle').length).toBe(2);
                 expect($('.fa-plus-square-o').length).toBe(2);
             });
 
@@ -250,10 +241,10 @@ describe('a11yTree plugin', function () {
                             html: '<i class="fa fa-plus-square-o"></i>'
                         },
                         onCollapse: function ($toggle) {
-                            $toggle.children('.toggle').find('.fa-minus-square-o').removeClass('fa-minus-square-o').addClass('fa-plus-square-o');
+                            $toggle.children('.at-toggle').find('.fa-minus-square-o').removeClass('fa-minus-square-o').addClass('fa-plus-square-o');
                         },
                         onExpand: function ($toggle) {
-                            $toggle.children('.toggle').find('.fa-plus-square-o').removeClass('fa-plus-square-o').addClass('fa-minus-square-o');
+                            $toggle.children('.at-toggle').find('.fa-plus-square-o').removeClass('fa-plus-square-o').addClass('fa-minus-square-o');
                         }
                     }
                 );
