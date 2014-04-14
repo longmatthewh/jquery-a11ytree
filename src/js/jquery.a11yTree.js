@@ -53,7 +53,6 @@
                 toggleHtml = self.options.customToggle.html;
             }
 
-
             $tree.find(HAS_CHILDREN_CLASS_SELECTOR).prepend('<div class="' + TOGGLE_CLASS  + '" aria-hidden="true">' + toggleHtml + '</div>');
             $tree.find(TOGGLE_CLASS_SELECTOR).on(CLICK_EVENT, function() {
                 var $listWithToggle = $(this).parent(LIST_ITEM_SELECTOR);
