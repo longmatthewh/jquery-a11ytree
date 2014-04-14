@@ -10,6 +10,7 @@
     var HAS_CHILDREN_CLASS = 'at-has-children', HAS_CHILDREN_CLASS_SELECTOR = '.' + HAS_CHILDREN_CLASS;
     var NO_CHILDREN_CLASS = 'at-no-children';
     var TOGGLE_CLASS = 'at-toggle', TOGGLE_CLASS_SELECTOR = '.' + TOGGLE_CLASS;
+    var DOWN_ARROW_KEY = 40, UP_ARROW_KEY = 38, RIGHT_ARROW_KEY = 39, LEFT_ARROW_KEY = 37;
 
     defaults = {
         insertToggle : true,
@@ -71,16 +72,16 @@
             var self = this;
             $tree.on(KEYDOWN_EVENT, function(event) {
                 var $currentFocusedElement = $tree.find('li:focus');
-                if (event.which === 40) {
+                if (event.which === DOWN_ARROW_KEY) {
                     event.preventDefault();
                     self.handleDownArrowKey($currentFocusedElement);
-                } else if (event.which === 38) {
+                } else if (event.which === UP_ARROW_KEY) {
                     event.preventDefault();
                     self.handleUpArrowKey($currentFocusedElement);
-                } else if (event.which === 39) {
+                } else if (event.which === RIGHT_ARROW_KEY) {
                     event.preventDefault();
                     self.handleRightArrowKey($currentFocusedElement);
-                } else if (event.which === 37) {
+                } else if (event.which === LEFT_ARROW_KEY) {
                     event.preventDefault();
                     self.handleLeftArrowKey($currentFocusedElement);
                 }
