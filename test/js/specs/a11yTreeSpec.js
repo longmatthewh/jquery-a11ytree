@@ -74,6 +74,20 @@ describe('a11yTree plugin', function () {
 
         describe('has navigation', function() {
 
+            describe('item selection', function() {
+                it('sets the item in focus as selected', function() {
+                    focusOnItem($firstLevel1Item);
+                    expect($firstLevel1Item.attr('aria-selected')).toBe('true');
+                });
+
+                it('only one item at a time can be selected', function() {
+                    focusOnItem($firstLevel1Item);
+                    focusOnItem($firstLevel2Item);
+                    expect($(LEVEL_1_ID_SELECTOR).find('[aria-selected="true"]').length).toBe(1);
+                    expect($firstLevel2Item.attr('aria-selected')).toBe('true');
+                });
+            });
+
             describe('using toggle controls', function() {
 
                 it('adds toggle control to items with children', function () {
@@ -109,20 +123,21 @@ describe('a11yTree plugin', function () {
                 describe('using the down arrow key', function() {
 
                     it('focuses on the next sibling item in the tree if current item in focus is collapsed or has no children', function() {
-                        $firstLevel1Item.focus();
+                        focusOnItem($firstLevel1Item);
+                        focusOnItem($firstLevel1Item);
                         triggerKeydown(40);
                         isOnlyItemInFocus($secondLevel1Item);
                     });
 
                     it('focuses on first child item in the tree if current item in focus has children and is expanded', function() {
-                        $firstLevel1Item.focus();
+                        focusOnItem($firstLevel1Item);
                         triggerKeydown(39);
                         triggerKeydown(40);
                         isOnlyItemInFocus($firstLevel2Item);
                     });
 
                     it('focuses on next parent item in the tree if current item is the last child item of the sibling parent', function() {
-                        $firstLevel1Item.focus();
+                        focusOnItem($firstLevel1Item);
                         triggerKeydown(39);
                         triggerKeydown(40);
                         triggerKeydown(40);
@@ -135,21 +150,21 @@ describe('a11yTree plugin', function () {
                 describe('using the up arrow key', function() {
 
                     it('focuses on the previous sibling element in the tree if the previous sibling is collapsed or has no children', function() {
-                        $secondLevel1Item.focus();
+                        focusOnItem($secondLevel1Item);
                         triggerKeydown(38);
                         isOnlyItemInFocus($firstLevel1Item);
                     });
 
                     it('focuses on the last child item of the previous sibling in the tree if the previous sibling has children and is expanded', function() {
-                        $firstLevel1Item.focus();
+                        focusOnItem($firstLevel1Item);
                         triggerKeydown(39);
-                        $secondLevel1Item.focus();
+                        focusOnItem($secondLevel1Item);
                         triggerKeydown(38);
                         isOnlyItemInFocus($secondLevel2Item);
                     });
 
                     it('focuses on the parent if the item in focus is the first child of an item', function() {
-                        $firstLevel1Item.focus();
+                        focusOnItem($firstLevel1Item);
                         triggerKeydown(39);
                         triggerKeydown(40);
                         triggerKeydown(38);
@@ -159,14 +174,14 @@ describe('a11yTree plugin', function () {
 
                 describe('using the right arrow key', function() {
                     it('expands the child list when exists in the tree', function() {
-                        $firstLevel1Item.focus();
+                        focusOnItem($firstLevel1Item);
                         triggerKeydown(39);
                         isOnlyItemInFocus($firstLevel1Item);
                         isExpanded($firstLevel1Item);
                     });
 
                     it('focuses on the first child in a list when exists', function() {
-                        $firstLevel1Item.focus();
+                        focusOnItem($firstLevel1Item);
                         triggerKeydown(39);
                         triggerKeydown(39);
                         isOnlyItemInFocus($firstLevel2Item);
@@ -175,7 +190,7 @@ describe('a11yTree plugin', function () {
 
                 describe('using the right arrow key', function() {
                     it('collapses the child list when exists in the tree', function() {
-                        $firstLevel1Item.focus();
+                        focusOnItem($firstLevel1Item);
                         triggerKeydown(39);
                         triggerKeydown(37);
                         isOnlyItemInFocus($firstLevel1Item);
@@ -183,7 +198,7 @@ describe('a11yTree plugin', function () {
                     });
 
                     it('focuses on the parent item if current item in list has no children', function() {
-                        $firstLevel1Item.focus();
+                        focusOnItem($firstLevel1Item);
                         triggerKeydown(39);
                         triggerKeydown(39);
                         triggerKeydown(39);
@@ -193,6 +208,8 @@ describe('a11yTree plugin', function () {
                 });
 
             });
+
+
         });
     });
 
@@ -249,7 +266,7 @@ describe('a11yTree plugin', function () {
                     }
                 );
                 $firstLevel1Item = getNthItemInList(LEVEL_1_ID_SELECTOR, 1);
-                $firstLevel1Item.focus();
+                focusOnItem($firstLevel1Item);
             });
 
             it('onCollapse triggers custom toggle collapse when defined', function() {
@@ -271,6 +288,10 @@ describe('a11yTree plugin', function () {
         var event = jQuery.Event('keydown');
         event.which = key;
         $(LEVEL_1_ID_SELECTOR).trigger(event);
+    }
+
+    function focusOnItem($item) {
+        $item.focus();
     }
 
     function isOnlyItemInFocus($item) {

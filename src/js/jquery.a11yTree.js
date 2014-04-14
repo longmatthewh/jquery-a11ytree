@@ -32,6 +32,13 @@
             this.identifyChildren($tree, ARIA_TREE_ROLE, 1);
             this.addToggle($tree);
             this.addKeyBoardNav($tree);
+            this.addNodeSelection($tree);
+        },
+        addNodeSelection : function($tree) {
+            $tree.find('li').on('focus', function(event) {
+                $tree.find('li').attr('aria-selected','false');
+                $(this).attr('aria-selected','true');
+            });
         },
         addToggle : function($tree) {
             var self = this;
@@ -43,6 +50,8 @@
             if (self.options.customToggle.html) {
                 toggleHtml = self.options.customToggle.html;
             }
+
+
             $tree.find(HAS_CHILDREN_CLASS_SELECTOR).prepend('<div class="' + TOGGLE_CLASS  + '" aria-hidden="true">' + toggleHtml + '</div>');
             $tree.find(TOGGLE_CLASS_SELECTOR).on(CLICK_EVENT, function() {
                 var $listWithToggle = $(this).parent(LIST_ITEM_SELECTOR);
