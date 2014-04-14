@@ -68,20 +68,23 @@
             this.addTreeItemsToTabOrder($tree);
             this.handleArrowKeys($tree);
         },
+        isKey : function(event, key) {
+            return event.which === key;
+        },
         handleArrowKeys : function($tree) {
             var self = this;
             $tree.on(KEYDOWN_EVENT, function(event) {
                 var $currentFocusedElement = $tree.find('li:focus');
-                if (event.which === DOWN_ARROW_KEY) {
+                if (self.isKey(event, DOWN_ARROW_KEY)) {
                     event.preventDefault();
                     self.handleDownArrowKey($currentFocusedElement);
-                } else if (event.which === UP_ARROW_KEY) {
+                } else if (self.isKey(event, UP_ARROW_KEY)) {
                     event.preventDefault();
                     self.handleUpArrowKey($currentFocusedElement);
-                } else if (event.which === RIGHT_ARROW_KEY) {
+                } else if (self.isKey(event, RIGHT_ARROW_KEY)) {
                     event.preventDefault();
                     self.handleRightArrowKey($currentFocusedElement);
-                } else if (event.which === LEFT_ARROW_KEY) {
+                } else if (self.isKey(event, LEFT_ARROW_KEY)) {
                     event.preventDefault();
                     self.handleLeftArrowKey($currentFocusedElement);
                 }
