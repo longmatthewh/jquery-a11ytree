@@ -6,6 +6,7 @@
     var KEYDOWN_EVENT = 'keydown', CLICK_EVENT = 'click';
     var ROLE_ATTR_NAME = 'role', ARIA_LEVEL_ATTR_NAME = 'aria-level';
     var ARIA_TREE_ROLE = 'tree', ARIA_TREEITEM_ROLE = 'treeitem', ARIA_GROUP_ROLE = 'group';
+    var ARIA_SELECTED_ATTR = 'aria-selected', ARIA_EXPANDED_ATTR='aria-expanded';
     var HAS_CHILDREN_CLASS = 'at-has-children', HAS_CHILDREN_CLASS_SELECTOR = '.' + HAS_CHILDREN_CLASS;
     var NO_CHILDREN_CLASS = 'at-no-children';
     var TOGGLE_CLASS = 'at-toggle', TOGGLE_CLASS_SELECTOR = '.' + TOGGLE_CLASS;
@@ -36,8 +37,8 @@
         },
         addNodeSelection : function($tree) {
             $tree.find('li').on('focus', function(event) {
-                $tree.find('li').attr('aria-selected','false');
-                $(this).attr('aria-selected','true');
+                $tree.find('li').attr(ARIA_SELECTED_ATTR,'false');
+                $(this).attr(ARIA_SELECTED_ATTR,'true');
             });
         },
         addToggle : function($tree) {
@@ -131,19 +132,19 @@
             if (this.options.onExpand) {
                 this.options.onExpand($item);
             }
-            $item.attr('aria-expanded','true');
+            $item.attr(ARIA_EXPANDED_ATTR,'true');
         },
         collapse : function($item) {
             if (this.options.onCollapse) {
                 this.options.onCollapse($item);
             }
-            $item.attr('aria-expanded','false');
+            $item.attr(ARIA_EXPANDED_ATTR,'false');
         },
         isExpanded : function($item) {
-            return $item.attr('aria-expanded') === 'true';
+            return $item.attr(ARIA_EXPANDED_ATTR) === 'true';
         },
         isCollapsed : function($item) {
-            return $item.attr('aria-expanded') === 'false';
+            return $item.attr(ARIA_EXPANDED_ATTR) === 'false';
         },
         findParent : function($item) {
             return $item.parent(LIST_SELECTOR).parent(LIST_ITEM_SELECTOR);
