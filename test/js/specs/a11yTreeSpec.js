@@ -82,14 +82,18 @@ describe('a11yTree plugin', function () {
 
                 it('sets the item in focus as selected', function() {
                     focusOnItem($firstLevel1Item);
-                    expect($firstLevel1Item.attr('aria-selected')).toBe('true');
+                    isOnlyItemInFocus($firstLevel1Item);
                 });
 
                 it('only one item at a time can be selected', function() {
                     focusOnItem($firstLevel1Item);
                     focusOnItem($firstLevel2Item);
-                    expect($(LEVEL_1_ID_SELECTOR).find('[aria-selected="true"]').length).toBe(1);
-                    expect($firstLevel2Item.attr('aria-selected')).toBe('true');
+                    isOnlyItemInFocus($firstLevel2Item);
+                });
+
+                it('marks item as selected when clicking on it', function() {
+                    $firstLevel2Item.click();
+                    isOnlyItemInFocus($firstLevel2Item);
                 });
             });
 
@@ -211,10 +215,7 @@ describe('a11yTree plugin', function () {
                         isOnlyItemInFocus($firstLevel2Item);
                     });
                 });
-
             });
-
-
         });
     });
 

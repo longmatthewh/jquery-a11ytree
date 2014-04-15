@@ -31,6 +31,15 @@
     Plugin.prototype = {
         init : function () {
             var $tree = $(this.element);
+            var self = this;
+            $tree.find('li').click(function(event) {
+                self.focusOn($(this), $tree);
+                if (event.stopPropagation) {
+                    event.stopPropagation()
+                } else {
+                    event.cancelBubble = true
+                }
+            });
             this.identifyChildren($tree, ARIA_TREE_ROLE, 1);
             this.addToggle($tree);
             this.addKeyBoardNav($tree);
