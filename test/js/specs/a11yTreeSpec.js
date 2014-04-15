@@ -75,6 +75,11 @@ describe('a11yTree plugin', function () {
         describe('has navigation', function() {
 
             describe('item selection', function() {
+
+                it('initializes first item as selected', function() {
+                    isOnlyItemInFocus($firstLevel1Item);
+                });
+
                 it('sets the item in focus as selected', function() {
                     focusOnItem($firstLevel1Item);
                     expect($firstLevel1Item.attr('aria-selected')).toBe('true');
@@ -116,14 +121,14 @@ describe('a11yTree plugin', function () {
 
             describe('using the keyboard', function() {
 
-                it('adds each item to the tab order', function() {
-                    expect($(LEVEL_1_ID_SELECTOR).find('li[tabindex="0"]').length).toBe($(LEVEL_1_ID_SELECTOR).find(LIST_ITEM_SELECTOR).length);
+                it('adds only main tree item to the tab order', function() {
+                    expect($(LEVEL_1_ID_SELECTOR).attr('tabindex')).toBe('0');
+                    expect($(LEVEL_1_ID_SELECTOR).find('li[tabindex="0"]').length).toBe(0);
                 });
 
                 describe('using the down arrow key', function() {
 
                     it('focuses on the next sibling item in the tree if current item in focus is collapsed or has no children', function() {
-                        focusOnItem($firstLevel1Item);
                         focusOnItem($firstLevel1Item);
                         triggerKeydown(40);
                         isOnlyItemInFocus($secondLevel1Item);
@@ -291,12 +296,13 @@ describe('a11yTree plugin', function () {
     }
 
     function focusOnItem($item) {
-        $item.focus();
+        $(MAIN_SELECTOR).find('li').attr('aria-selected','false');
+        $item.attr('aria-selected','true');
     }
 
     function isOnlyItemInFocus($item) {
-        expect($(MAIN_SELECTOR + ' :focus').length).toBe(1);
-        expect($item.is(':focus')).toBe(true);
+        expect($(MAIN_SELECTOR).find('[aria-selected="true"]').length).toBe(1);
+        expect($item.attr('aria-selected')).toBe('true');
     }
 
     function getNthItemInList(listSelector, idx) {
