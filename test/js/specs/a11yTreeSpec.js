@@ -215,6 +215,20 @@ describe('a11yTree plugin', function () {
                         isOnlyItemInFocus($firstLevel2Item);
                     });
                 });
+                describe('using the Enter key', function() {
+                    it('expands the current selected element if it has children and is collapsed', function() {
+                        focusOnItem($firstLevel1Item);
+                        triggerKeydown(13);
+                        isExpanded($firstLevel1Item);
+                    });
+
+                    it('collapses the current selected element if it has children and is expanded', function() {
+                        focusOnItem($firstLevel1Item);
+                        triggerKeydown(13);
+                        triggerKeydown(13);
+                        isCollapsed($firstLevel1Item);
+                    });
+                });
             });
         });
     });

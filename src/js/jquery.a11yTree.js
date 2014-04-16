@@ -10,7 +10,7 @@
     var HAS_CHILDREN_CLASS = 'at-has-children', HAS_CHILDREN_CLASS_SELECTOR = '.' + HAS_CHILDREN_CLASS;
     var NO_CHILDREN_CLASS = 'at-no-children';
     var TOGGLE_CLASS = 'at-toggle', TOGGLE_CLASS_SELECTOR = '.' + TOGGLE_CLASS;
-    var DOWN_ARROW_KEY = 40, UP_ARROW_KEY = 38, RIGHT_ARROW_KEY = 39, LEFT_ARROW_KEY = 37;
+    var DOWN_ARROW_KEY = 40, UP_ARROW_KEY = 38, RIGHT_ARROW_KEY = 39, LEFT_ARROW_KEY = 37, ENTER_KEY=13;
 
     defaults = {
         insertToggle : true,
@@ -31,17 +31,9 @@
     Plugin.prototype = {
         init : function () {
             var $tree = $(this.element);
-            var self = this;
-            $tree.find('li').click(function(event) {
-                self.focusOn($(this), $tree);
-                if (event.stopPropagation) {
-                    event.stopPropagation()
-                } else {
-                    event.cancelBubble = true
-                }
-            });
             this.identifyChildren($tree, ARIA_TREE_ROLE, 1);
             this.addToggle($tree);
+            this.addMouseNav($tree);
             this.addKeyBoardNav($tree);
         },
         addToggle : function($tree) {
@@ -57,23 +49,30 @@
 
             $tree.find(HAS_CHILDREN_CLASS_SELECTOR).prepend('<div class="' + TOGGLE_CLASS  + '" aria-hidden="true">' + toggleHtml + '</div>');
             $tree.find(TOGGLE_CLASS_SELECTOR).on(CLICK_EVENT, function() {
-                var $listWithToggle = $(this).parent(LIST_ITEM_SELECTOR);
-                if (self.isCollapsed($listWithToggle)) {
-                    self.expand($listWithToggle);
+                var $listItemWithToggle = $(this).parent(LIST_ITEM_SELECTOR);
+                self.toggleExpandCollapse($listItemWithToggle);
+            });
+        },
+        addMouseNav : function($tree) {
+            var self = this;
+            $tree.find('li').click(function(event) {
+                self.focusOn($(this), $tree);
+                if (event.stopPropagation) {
+                    event.stopPropagation()
                 } else {
-                    self.collapse($listWithToggle);
+                    event.cancelBubble = true
                 }
             });
         },
         addKeyBoardNav : function($tree) {
             $tree.find(' > li:nth-child(1)').attr(ARIA_SELECTED_ATTR,'true');
             this.addTreeToTabOrder($tree);
-            this.handleArrowKeys($tree);
+            this.handleKeys($tree);
         },
         isKey : function(event, key) {
             return event.which === key;
         },
-        handleArrowKeys : function($tree) {
+        handleKeys : function($tree) {
             var self = this;
             $tree.on(KEYDOWN_EVENT, function(event) {
                 var $currentFocusedElement = $tree.find('[aria-selected="true"]');
@@ -89,6 +88,8 @@
                 } else if (self.isKey(event, LEFT_ARROW_KEY)) {
                     event.preventDefault();
                     self.handleLeftArrowKey($currentFocusedElement, $tree);
+                } else if (self.isKey(event, ENTER_KEY)) {
+                    self.handleEnterKey($currentFocusedElement, $tree);
                 }
             });
         },
@@ -128,6 +129,9 @@
                 this.focusOn($item.next(), $tree);
             }
         },
+        handleEnterKey : function($item, $tree) {
+            this.toggleExpandCollapse($item);
+        },
         hasChildren : function($item) {
             return $item.hasClass(HAS_CHILDREN_CLASS);
         },
@@ -154,6 +158,13 @@
         },
         isCollapsed : function($item) {
             return $item.attr(ARIA_EXPANDED_ATTR) === 'false';
+        },
+        toggleExpandCollapse : function($item) {
+            if (this.isCollapsed($item)) {
+                this.expand($item);
+            } else {
+                this.collapse($item);
+            }
         },
         findParent : function($item) {
             return $item.parent(LIST_SELECTOR).parent(LIST_ITEM_SELECTOR);
