@@ -1,3 +1,4 @@
+
 describe('a11yTree plugin', function () {
     const MAIN_SELECTOR = '#main';
     const LIST_ITEM_SELECTOR = 'li';
@@ -71,7 +72,6 @@ describe('a11yTree plugin', function () {
             isCollapsed($firstLevel2Item);
         });
 
-
         describe('has navigation', function() {
 
             describe('item selection', function() {
@@ -134,23 +134,23 @@ describe('a11yTree plugin', function () {
 
                     it('focuses on the next sibling item in the tree if current item in focus is collapsed or has no children', function() {
                         focusOnItem($firstLevel1Item);
-                        triggerKeydown(40);
+                        downArrowKey();
                         isOnlyItemInFocus($secondLevel1Item);
                     });
 
                     it('focuses on first child item in the tree if current item in focus has children and is expanded', function() {
                         focusOnItem($firstLevel1Item);
-                        triggerKeydown(39);
-                        triggerKeydown(40);
+                        rightArrowKey();
+                        downArrowKey();
                         isOnlyItemInFocus($firstLevel2Item);
                     });
 
                     it('focuses on next parent item in the tree if current item is the last child item of the sibling parent', function() {
                         focusOnItem($firstLevel1Item);
-                        triggerKeydown(39);
-                        triggerKeydown(40);
-                        triggerKeydown(40);
-                        triggerKeydown(40);
+                        rightArrowKey();
+                        downArrowKey();
+                        downArrowKey();
+                        downArrowKey();
                         isOnlyItemInFocus($secondLevel1Item);
                     });
 
@@ -160,23 +160,23 @@ describe('a11yTree plugin', function () {
 
                     it('focuses on the previous sibling element in the tree if the previous sibling is collapsed or has no children', function() {
                         focusOnItem($secondLevel1Item);
-                        triggerKeydown(38);
+                        upArrowKey();
                         isOnlyItemInFocus($firstLevel1Item);
                     });
 
                     it('focuses on the last child item of the previous sibling in the tree if the previous sibling has children and is expanded', function() {
                         focusOnItem($firstLevel1Item);
-                        triggerKeydown(39);
+                        rightArrowKey();
                         focusOnItem($secondLevel1Item);
-                        triggerKeydown(38);
+                        upArrowKey();
                         isOnlyItemInFocus($secondLevel2Item);
                     });
 
                     it('focuses on the parent if the item in focus is the first child of an item', function() {
                         focusOnItem($firstLevel1Item);
-                        triggerKeydown(39);
-                        triggerKeydown(40);
-                        triggerKeydown(38);
+                        rightArrowKey();
+                        downArrowKey();
+                        upArrowKey();
                         isOnlyItemInFocus($firstLevel1Item);
                     });
                 });
@@ -184,15 +184,15 @@ describe('a11yTree plugin', function () {
                 describe('using the right arrow key', function() {
                     it('expands the child list when exists in the tree', function() {
                         focusOnItem($firstLevel1Item);
-                        triggerKeydown(39);
+                        rightArrowKey();
                         isOnlyItemInFocus($firstLevel1Item);
                         isExpanded($firstLevel1Item);
                     });
 
                     it('focuses on the first child in a list when exists', function() {
                         focusOnItem($firstLevel1Item);
-                        triggerKeydown(39);
-                        triggerKeydown(39);
+                        rightArrowKey();
+                        rightArrowKey();
                         isOnlyItemInFocus($firstLevel2Item);
                     });
                 });
@@ -200,33 +200,51 @@ describe('a11yTree plugin', function () {
                 describe('using the right arrow key', function() {
                     it('collapses the child list when exists in the tree', function() {
                         focusOnItem($firstLevel1Item);
-                        triggerKeydown(39);
-                        triggerKeydown(37);
+                        rightArrowKey();
+                        leftArrowKey();
                         isOnlyItemInFocus($firstLevel1Item);
                         isCollapsed($firstLevel1Item);
                     });
 
                     it('focuses on the parent item if current item in list has no children', function() {
                         focusOnItem($firstLevel1Item);
-                        triggerKeydown(39);
-                        triggerKeydown(39);
-                        triggerKeydown(39);
-                        triggerKeydown(37);
+                        rightArrowKey();
+                        rightArrowKey();
+                        rightArrowKey();
+                        leftArrowKey();
                         isOnlyItemInFocus($firstLevel2Item);
                     });
                 });
                 describe('using the Enter key', function() {
                     it('expands the current selected element if it has children and is collapsed', function() {
                         focusOnItem($firstLevel1Item);
-                        triggerKeydown(13);
+                        enterKey();
                         isExpanded($firstLevel1Item);
                     });
 
                     it('collapses the current selected element if it has children and is expanded', function() {
                         focusOnItem($firstLevel1Item);
-                        triggerKeydown(13);
-                        triggerKeydown(13);
+                        enterKey();
+                        enterKey();
                         isCollapsed($firstLevel1Item);
+                    });
+                });
+
+                describe('using the end key', function() {
+                    it('selects the last expanded element when the element is the last element of the top tree level', function() {
+                        focusOnItem($firstLevel1Item);
+                        endKey();
+                        isOnlyItemInFocus($secondLevel1Item);
+                    });
+
+                    it('selects the last expanded element when the element is the last element of the last expanded element', function() {
+                        focusOnItem($firstLevel1Item);
+                        $secondLevel1Item.remove();
+                        enterKey();
+                        downArrowKey();
+                        isOnlyItemInFocus($firstLevel2Item);
+                        endKey();
+                        isOnlyItemInFocus($secondLevel2Item);
                     });
                 });
             });
@@ -290,14 +308,14 @@ describe('a11yTree plugin', function () {
             });
 
             it('onCollapse triggers custom toggle collapse when defined', function() {
-                triggerKeydown(39);
-                triggerKeydown(37);
+                rightArrowKey();
+                leftArrowKey();
                 expect($('.fa-plus-square-o').length).toBe(2);
                 expect($('.fa-minus-square-o').length).toBe(0);
             });
 
             it('onExpand triggers custom toggle expand when defined', function() {
-                triggerKeydown(39);
+                rightArrowKey();
                 expect($('.fa-minus-square-o').length).toBe(1);
                 expect($('.fa-plus-square-o').length).toBe(1);
             });
@@ -310,6 +328,30 @@ describe('a11yTree plugin', function () {
         $(LEVEL_1_ID_SELECTOR).trigger(event);
     }
 
+    function downArrowKey() {
+        triggerKeydown(40);
+    }
+
+    function upArrowKey() {
+        triggerKeydown(38);
+    }
+    
+    function rightArrowKey() {
+        triggerKeydown(39);
+    }
+
+    function leftArrowKey() {
+        triggerKeydown(37);
+    }
+    
+    function enterKey() {
+        triggerKeydown(13);
+    }
+
+    function endKey() {
+        triggerKeydown(35);
+    }
+    
     function focusOnItem($item) {
         $(MAIN_SELECTOR).find('li').attr('aria-selected','false');
         $item.attr('aria-selected','true');

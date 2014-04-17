@@ -10,7 +10,7 @@
     var HAS_CHILDREN_CLASS = 'at-has-children', HAS_CHILDREN_CLASS_SELECTOR = '.' + HAS_CHILDREN_CLASS;
     var NO_CHILDREN_CLASS = 'at-no-children';
     var TOGGLE_CLASS = 'at-toggle', TOGGLE_CLASS_SELECTOR = '.' + TOGGLE_CLASS;
-    var DOWN_ARROW_KEY = 40, UP_ARROW_KEY = 38, RIGHT_ARROW_KEY = 39, LEFT_ARROW_KEY = 37, ENTER_KEY=13;
+    var DOWN_ARROW_KEY = 40, UP_ARROW_KEY = 38, RIGHT_ARROW_KEY = 39, LEFT_ARROW_KEY = 37, ENTER_KEY=13, END_KEY=35;
 
     defaults = {
         insertToggle : true,
@@ -90,6 +90,8 @@
                     self.handleLeftArrowKey($currentFocusedElement, $tree);
                 } else if (self.isKey(event, ENTER_KEY)) {
                     self.handleEnterKey($currentFocusedElement, $tree);
+                } else if (self.isKey(event, END_KEY)) {
+                    self.handleEndKey($currentFocusedElement, $tree);
                 }
             });
         },
@@ -131,6 +133,20 @@
         },
         handleEnterKey : function($item, $tree) {
             this.toggleExpandCollapse($item);
+        },
+        handleEndKey : function($item, $tree) {
+
+            var $lastListItemInTree = $tree.find(LIST_ITEM_SELECTOR).last();
+            var $lastExpandedListInTree = $lastListItemInTree.parent(LIST_SELECTOR);
+            if ($lastExpandedListInTree.attr(ROLE_ATTR_NAME) !== ARIA_TREE_ROLE) {
+                var $closestExpandedListItem = $lastListItemInTree.closest('li[aria-expanded="true"]');
+                if ($closestExpandedListItem.length === 0) {
+                    $lastExpandedListInTree = $tree;
+                } else {
+                    $lastExpandedListInTree = $closestExpandedListItem.children(LIST_SELECTOR);
+                }
+            }
+            this.focusOn(this.findLastChild($lastExpandedListInTree), $tree);
         },
         hasChildren : function($item) {
             return $item.hasClass(HAS_CHILDREN_CLASS);
