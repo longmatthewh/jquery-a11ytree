@@ -48,20 +48,18 @@
             }
 
             $tree.find(HAS_CHILDREN_CLASS_SELECTOR).prepend('<div class="' + TOGGLE_CLASS  + '" aria-hidden="true">' + toggleHtml + '</div>');
-            $tree.find(TOGGLE_CLASS_SELECTOR).on(CLICK_EVENT, function() {
+            $tree.find(TOGGLE_CLASS_SELECTOR).on(CLICK_EVENT, function(event) {
                 var $listItemWithToggle = $(this).parent(LIST_ITEM_SELECTOR);
                 self.toggleExpandCollapse($listItemWithToggle);
+
             });
         },
         addMouseNav : function($tree) {
             var self = this;
             $tree.find('li').click(function(event) {
+                event.stopPropagation();
                 self.focusOn($(this), $tree);
-                if (event.stopPropagation) {
-                    event.stopPropagation();
-                } else {
-                    event.cancelBubble = true;
-                }
+                //return false;
             });
         },
         addKeyBoardNav : function($tree) {
@@ -91,8 +89,10 @@
                 } else if (self.isKey(event, ENTER_KEY)) {
                     self.handleEnterKey($currentFocusedElement, $tree);
                 } else if (self.isKey(event, END_KEY)) {
+                    event.preventDefault();
                     self.handleEndKey($currentFocusedElement, $tree);
                 } else if (self.isKey(event, HOME_KEY)) {
+                    event.preventDefault();
                     self.handleHomeKey($currentFocusedElement, $tree);
                 }
             });
