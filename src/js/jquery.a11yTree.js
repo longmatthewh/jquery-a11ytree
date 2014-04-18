@@ -111,13 +111,13 @@
             if (this.isCollapsed($item)) {
                 this.expand($item);
             } else if (this.isExpanded($item)) {
-                this.focusOn(this.findFirstChild($item), $tree);
+                this.focusOn(this.findFirstListItemInSubList($item), $tree);
             }
         },
         handleUpArrowKey : function($item, $tree) {
             if (this.isExpanded($item.prev())) {
                 var $previousSiblingList = $item.prev().children(LIST_SELECTOR);
-                this.focusOn(this.findLastChild($previousSiblingList).focus(), $tree);
+                this.focusOn(this.findLastListItem($previousSiblingList).focus(), $tree);
             } else if ($item.prev().length === 0) {
                 this.focusOn(this.findParent($item), $tree);
             } else {
@@ -126,7 +126,7 @@
         },
         handleDownArrowKey : function($item, $tree) {
             if (this.hasChildren($item) && this.isExpanded($item)) {
-                this.focusOn(this.findFirstChild($item), $tree);
+                this.focusOn(this.findFirstListItemInSubList($item), $tree);
             } else if ($item.next().length === 0) {
                 this.focusOn(this.findParent($item).next(), $tree);
             } else {
@@ -137,21 +137,20 @@
             this.toggleExpandCollapse($item);
         },
         handleEndKey : function($item, $tree) {
-
             var $lastListItemInTree = $tree.find(LIST_ITEM_SELECTOR).last();
-            var $lastExpandedListInTree = $lastListItemInTree.parent(LIST_SELECTOR);
-            if ($lastExpandedListInTree.attr(ROLE_ATTR_NAME) !== ARIA_TREE_ROLE) {
+            var $listWithLastListItemInTree = $lastListItemInTree.parent(LIST_SELECTOR);
+            if (!this.isParentTree($listWithLastListItemInTree)) {
                 var $closestExpandedListItem = $lastListItemInTree.closest('li[aria-expanded="true"]');
                 if ($closestExpandedListItem.length === 0) {
-                    $lastExpandedListInTree = $tree;
+                    $listWithLastListItemInTree = $tree;
                 } else {
-                    $lastExpandedListInTree = $closestExpandedListItem.children(LIST_SELECTOR);
+                    $listWithLastListItemInTree = $closestExpandedListItem.children(LIST_SELECTOR);
                 }
             }
-            this.focusOn(this.findLastChild($lastExpandedListInTree), $tree);
+            this.focusOn(this.findLastListItem($listWithLastListItemInTree), $tree);
         },
         handleHomeKey : function($item, $tree) {
-            this.focusOn($tree.find(' > li:nth-child(1)'), $tree);
+            this.focusOn(this.findFirstListItem($tree), $tree);
         },
         hasChildren : function($item) {
             return $item.hasClass(HAS_CHILDREN_CLASS);
@@ -187,13 +186,19 @@
                 this.collapse($item);
             }
         },
+        isParentTree : function($list) {
+            return $list.attr(ROLE_ATTR_NAME) === ARIA_TREE_ROLE;
+        },
         findParent : function($item) {
             return $item.parent(LIST_SELECTOR).parent(LIST_ITEM_SELECTOR);
         },
-        findLastChild : function($list) {
+        findLastListItem : function($list) {
             return $list.find(' > li:last-child');
         },
-        findFirstChild : function($item) {
+        findFirstListItem : function($list) {
+            return $list.find(' > li:first-child');
+        },
+        findFirstListItemInSubList : function($item) {
             return $item.children(LIST_SELECTOR).find(' > li:nth-child(1)');
         },
         identifyListItemWithChildren : function($listItem) {
