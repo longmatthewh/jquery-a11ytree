@@ -10,7 +10,7 @@
     var HAS_CHILDREN_CLASS = 'at-has-children', HAS_CHILDREN_CLASS_SELECTOR = '.' + HAS_CHILDREN_CLASS;
     var NO_CHILDREN_CLASS = 'at-no-children';
     var TOGGLE_CLASS = 'at-toggle', TOGGLE_CLASS_SELECTOR = '.' + TOGGLE_CLASS;
-    var DOWN_ARROW_KEY = 40, UP_ARROW_KEY = 38, RIGHT_ARROW_KEY = 39, LEFT_ARROW_KEY = 37, ENTER_KEY=13, END_KEY=35;
+    var DOWN_ARROW_KEY = 40, UP_ARROW_KEY = 38, RIGHT_ARROW_KEY = 39, LEFT_ARROW_KEY = 37, ENTER_KEY=13, END_KEY=35, HOME_KEY=36;
 
     defaults = {
         insertToggle : true,
@@ -92,6 +92,8 @@
                     self.handleEnterKey($currentFocusedElement, $tree);
                 } else if (self.isKey(event, END_KEY)) {
                     self.handleEndKey($currentFocusedElement, $tree);
+                } else if (self.isKey(event, HOME_KEY)) {
+                    self.handleHomeKey($currentFocusedElement, $tree);
                 }
             });
         },
@@ -147,6 +149,9 @@
                 }
             }
             this.focusOn(this.findLastChild($lastExpandedListInTree), $tree);
+        },
+        handleHomeKey : function($item, $tree) {
+            this.focusOn($tree.find(' > li:nth-child(1)'), $tree);
         },
         hasChildren : function($item) {
             return $item.hasClass(HAS_CHILDREN_CLASS);

@@ -247,6 +247,17 @@ describe('a11yTree plugin', function () {
                         isOnlyItemInFocus($secondLevel2Item);
                     });
                 });
+
+                describe('using the home key', function() {
+                    it('selects the first element of the tree', function() {
+                        focusOnItem($firstLevel1Item);
+                        enterKey();
+                        downArrowKey();
+                        isOnlyItemInFocus($firstLevel2Item);
+                        homeKey();
+                        isOnlyItemInFocus($firstLevel1Item);
+                    });
+                });
             });
         });
     });
@@ -350,6 +361,10 @@ describe('a11yTree plugin', function () {
 
     function endKey() {
         triggerKeydown(35);
+    }
+
+    function homeKey() {
+        triggerKeydown(36);
     }
     
     function focusOnItem($item) {
