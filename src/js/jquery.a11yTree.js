@@ -58,9 +58,9 @@
             $tree.find('li').click(function(event) {
                 self.focusOn($(this), $tree);
                 if (event.stopPropagation) {
-                    event.stopPropagation()
+                    event.stopPropagation();
                 } else {
-                    event.cancelBubble = true
+                    event.cancelBubble = true;
                 }
             });
         },
@@ -232,6 +232,6 @@
                     new Plugin( this, options ));
             }
         });
-    }
+    };
 
 })( jQuery, window, document );

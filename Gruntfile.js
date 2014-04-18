@@ -11,13 +11,13 @@ module.exports = function(grunt) {
                 src: 'src/js/<%= pkg.name %>.js',
                 dest: 'dist/<%= pkg.name %>.min.js'
             }
+        },
+        jshint: {
+            all: ['src/js/<%= pkg.name %>.js']
         }
     });
 
-    // Load the plugin that provides the "uglify" task.
+    grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-uglify');
-
-    // Default task(s).
-    grunt.registerTask('default', ['uglify']);
-
+    grunt.registerTask('default', ['uglify', 'jshint']);
 };
