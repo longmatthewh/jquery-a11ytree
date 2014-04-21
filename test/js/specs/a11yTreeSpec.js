@@ -23,7 +23,7 @@ describe('a11yTree plugin', function () {
 
     describe('used on a parent ul element', function () {
 
-        var $firstLevel1Item, $firstLevel2Item, $secondLevel1Item, $secondLevel2Item;
+        var $firstLevel1Item, $firstLevel2Item, $secondLevel1Item, $secondLevel2Item, $secondLevel3Item;
 
         beforeEach(function () {
             $(LEVEL_1_ID_SELECTOR).a11yTree();
@@ -32,6 +32,7 @@ describe('a11yTree plugin', function () {
             $firstLevel2Item = getNthItemInList(LEVEL_2_ID_SELECTOR, 1);
             $secondLevel1Item = getNthItemInList(LEVEL_1_ID_SELECTOR, 2);
             $secondLevel2Item = getNthItemInList(LEVEL_2_ID_SELECTOR, 2);
+            $secondLevel3Item = getNthItemInList(LEVEL_3_ID_SELECTOR, 2);
         });
 
         it('identifies the parent tree', function () {
@@ -125,9 +126,15 @@ describe('a11yTree plugin', function () {
 
             describe('using the keyboard', function() {
 
-                it('adds only main tree item to the tab order', function() {
-                    expect($(LEVEL_1_ID_SELECTOR).attr('tabindex')).toBe('0');
-                    expect($(LEVEL_1_ID_SELECTOR).find('li[tabindex="0"]').length).toBe(0);
+                describe('tabindex', function() {
+                    it('adds only main tree item to the tab order', function() {
+                        expect($(LEVEL_1_ID_SELECTOR).attr('tabindex')).toBe('0');
+                        expect($(LEVEL_1_ID_SELECTOR).find('li[tabindex="0"]').length).toBe(0);
+                    });
+
+                    xit('all list items in the tree are guarunteed not to be in the tab order, but are focusable', function() {
+                        expect($(LEVEL_1_ID_SELECTOR).find('li[tabindex="-1"]').length).toBe($(LEVEL_1_ID_SELECTOR).find('li').length);
+                    });
                 });
 
                 describe('using the down arrow key', function() {
@@ -147,6 +154,18 @@ describe('a11yTree plugin', function () {
 
                     it('focuses on next parent item in the tree if current item is the last child item of the sibling parent', function() {
                         focusOnItem($firstLevel1Item);
+                        rightArrowKey();
+                        downArrowKey();
+                        downArrowKey();
+                        downArrowKey();
+                        isOnlyItemInFocus($secondLevel1Item);
+                    });
+
+                    it('focuses on next available parent item in the tree if current item is the last child item of the current parent', function() {
+                        $secondLevel2Item.remove();
+                        focusOnItem($firstLevel1Item);
+                        rightArrowKey();
+                        downArrowKey();
                         rightArrowKey();
                         downArrowKey();
                         downArrowKey();
@@ -178,6 +197,19 @@ describe('a11yTree plugin', function () {
                         downArrowKey();
                         upArrowKey();
                         isOnlyItemInFocus($firstLevel1Item);
+                    });
+
+                    it('focuses on the last visible child item of the previous sibling tree if the previous sibling has children and is expanded', function() {
+                        $secondLevel2Item.remove();
+                        focusOnItem($firstLevel1Item);
+                        rightArrowKey();
+                        downArrowKey();
+                        rightArrowKey();
+                        downArrowKey();
+                        downArrowKey();
+                        downArrowKey();
+                        upArrowKey();
+                        isOnlyItemInFocus($secondLevel3Item);
                     });
                 });
 
@@ -375,6 +407,7 @@ describe('a11yTree plugin', function () {
     function isOnlyItemInFocus($item) {
         expect($(MAIN_SELECTOR).find('[aria-selected="true"]').length).toBe(1);
         expect($item.attr('aria-selected')).toBe('true');
+        //expect($item.is(':focus')).toBe(true);
     }
 
     function getNthItemInList(listSelector, idx) {
