@@ -163,7 +163,7 @@
             }
         },
         focusOnNextAvailableSiblingInTree : function($item, $tree) {
-            if ($item === 0) {return;}
+            if ($item.length === 0) {return;}
 
             if ($item.next().length > 0) {
                 this.focusOn($item.next(), $tree);
