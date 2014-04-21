@@ -55,7 +55,7 @@
         },
         addMouseNav : function($tree) {
             var self = this;
-            $tree.find('li').click(function(event) {
+            $tree.find(LIST_ITEM_SELECTOR).click(function(event) {
                 event.stopPropagation();
                 self.focusOn($(this), $tree);
             });
@@ -97,7 +97,7 @@
         },
         addTreeToTabOrder : function($tree) {
             $tree.attr(TABINDEX_ATTR_NAME, '0');
-            $tree.find('li').attr(TABINDEX_ATTR_NAME, '-1');
+            $tree.find(LIST_ITEM_SELECTOR).attr(TABINDEX_ATTR_NAME, '-1');
         },
         handleLeftArrowKey : function($item, $tree) {
             if (this.isExpanded($item)) {
@@ -133,19 +133,7 @@
         handleEnterKey : function($item, $tree) {
             this.toggleExpandCollapse($item);
         },
-        focusOnLastVisibleElementInTree: function ($tree, $parentTree) {
-            var $lastListItemInTree = $tree.find(LIST_ITEM_SELECTOR).last();
-            var $listWithLastListItemInTree = $lastListItemInTree.parent(LIST_SELECTOR);
-            if (!this.isParentTree($listWithLastListItemInTree)) {
-                var $closestExpandedListItem = $lastListItemInTree.closest('li[aria-expanded="true"]');
-                if ($closestExpandedListItem.length === 0) {
-                    $listWithLastListItemInTree = $tree;
-                } else {
-                    $listWithLastListItemInTree = $closestExpandedListItem.children(LIST_SELECTOR);
-                }
-            }
-            this.focusOn(this.findLastListItem($listWithLastListItemInTree), $parentTree || $tree);
-        }, handleEndKey : function($item, $tree) {
+        handleEndKey : function($item, $tree) {
             this.focusOnLastVisibleElementInTree($tree);
         },
         handleHomeKey : function($item, $tree) {
@@ -163,13 +151,26 @@
             }
         },
         focusOnNextAvailableSiblingInTree : function($item, $tree) {
-            if ($item.length === 0) {return;}
+            if ($item === 0) {return;}
 
             if ($item.next().length > 0) {
                 this.focusOn($item.next(), $tree);
             } else {
                 this.focusOnNextAvailableSiblingInTree(this.findParent($item), $tree);
             }
+        },
+        focusOnLastVisibleElementInTree: function ($tree, $parentTree) {
+            var $lastListItemInTree = $tree.find(LIST_ITEM_SELECTOR).last();
+            var $listWithLastListItemInTree = $lastListItemInTree.parent(LIST_SELECTOR);
+            if (!this.isParentTree($listWithLastListItemInTree)) {
+                var $closestExpandedListItem = $lastListItemInTree.closest('li[aria-expanded="true"]');
+                if ($closestExpandedListItem.length === 0) {
+                    $listWithLastListItemInTree = $tree;
+                } else {
+                    $listWithLastListItemInTree = $closestExpandedListItem.children(LIST_SELECTOR);
+                }
+            }
+            this.focusOn(this.findLastListItem($listWithLastListItemInTree), $parentTree || $tree);
         },
         expand : function($item) {
             if (this.options.onExpand) {
