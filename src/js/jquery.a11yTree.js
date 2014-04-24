@@ -25,7 +25,7 @@
         this.element = element;
         this.options = $.extend( {}, defaults, options);
         this._defaults = defaults;
-        this.init();
+        this.init()
     }
 
     Plugin.prototype = {
