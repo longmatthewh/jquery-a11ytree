@@ -25,7 +25,7 @@
         this.element = element;
         this.options = $.extend( {}, defaults, options);
         this._defaults = defaults;
-        this.init()
+        this.init();
     }
 
     Plugin.prototype = {
@@ -198,7 +198,7 @@
             }
         },
         isParentTree : function($list) {
-            return $list.attr(ROLE_ATTR_NAME) == ARIA_TREE_ROLE;
+            return $list.attr(ROLE_ATTR_NAME) === ARIA_TREE_ROLE;
         },
         findParent : function($item) {
             return $item.parent(LIST_SELECTOR).parent(LIST_ITEM_SELECTOR);
