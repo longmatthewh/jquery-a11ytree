@@ -27,4 +27,5 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-jasmine');
     grunt.registerTask('default', ['uglify', 'jshint', 'jasmine']);
+    grunt.registerTask('travis', ['jshint','jasmine']);
 };
