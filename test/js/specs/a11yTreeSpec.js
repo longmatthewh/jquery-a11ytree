@@ -301,6 +301,24 @@ describe('a11yTree plugin', function () {
             $(LEVEL_1_ID_SELECTOR).a11yTree();
             expect($(LEVEL_1_ID_SELECTOR).find('li[id]').length).toBe($(LEVEL_1_ID_SELECTOR).find('li').length);
         });
+
+        it('uses exiting element id if element in tree already has an id', function() {
+            $(LEVEL_1_ID_SELECTOR).children('li:first-child').attr('id','tree-item-1');
+            $(LEVEL_1_ID_SELECTOR).a11yTree();
+            expect($('#tree-item-1').length).toBe(1);
+        });
+
+        it('constructs list element id using element level and sibling position', function() {
+            $(LEVEL_1_ID_SELECTOR).a11yTree();
+            expect($('#at-n-0').length).toBe(1);
+            expect($('#at-n-0-0').length).toBe(1);
+            expect($('#at-n-0-0-0').length).toBe(1);
+            expect($('#at-n-0-0-1').length).toBe(1);
+            expect($('#at-n-0-1').length).toBe(1);
+            expect($('#at-n-1').length).toBe(1);
+        });
+
+        it('updates ');
     });
 
     describe('has options', function() {

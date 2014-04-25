@@ -214,29 +214,47 @@
             this.collapse($listItem);
             $listItem.addClass(HAS_CHILDREN_CLASS);
         },
-        identifySubChildren : function($listItem, nestingLevel) {
+        identifySubChildren : function($listItem, $parentList, nestingLevel) {
 
             var $childList = $listItem.children(LIST_SELECTOR);
             if ($childList.length > 0) {
                 this.identifyListItemWithChildren($listItem);
-                this.identifyChildren($childList, ARIA_GROUP_ROLE, nestingLevel + 1);
+                this.identifyChildren($childList, ARIA_GROUP_ROLE, nestingLevel + 1, $parentList);
             } else {
                 $listItem.addClass(NO_CHILDREN_CLASS);
             }
         },
-        identifyChildren : function($list, listRole, nestingLevel) {
+        identifyChildren : function($list, listRole, nestingLevel, parentListItemPos) {
             var self = this;
             $list.attr(ROLE_ATTR_NAME, listRole);
             var $listItems = $list.children(LIST_ITEM_SELECTOR);
+
             $listItems.attr(ROLE_ATTR_NAME,ARIA_TREEITEM_ROLE).attr(ARIA_LEVEL_ATTR_NAME,nestingLevel);
             $listItems.each(function() {
                 self.addIdToListItem($(this), $list, nestingLevel);
-                self.identifySubChildren($(this), nestingLevel);
+                self.identifySubChildren($(this), $list, nestingLevel);
             });
         },
-        addIdToListItem : function($listItem, $list, nestingLevel) {
-            var id = 'at-tree-level-' + nestingLevel + '-node-' + $list.children('li').index($listItem);
-            $listItem.attr('id', id);
+        addIdToListItem : function($listItem, $list) {
+            var useId = this.generateListItemId($listItem, $list);
+            this.addIdAsDataOrId($listItem, useId);
+        },
+        addIdAsDataOrId : function($listItem, useId) {
+            var existingId = $listItem.attr('id');
+            if (!existingId) {
+                $listItem.attr('id', useId);
+            } else {
+                $listItem.data('at-identity',useId);
+            }
+        },
+        generateListItemId : function($listItem, $list) {
+            var id;
+            if ($list.parent('li').length === 0) {
+                id = 'at-n';
+            } else {
+                id = $listItem.data('at-identity') || $list.parent('li').attr('id');
+            }
+            return id + '-' + $list.children('li').index($listItem);
         }
     };
 
