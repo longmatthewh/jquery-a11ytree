@@ -8,6 +8,7 @@
     var ROLE_ATTR_NAME = 'role', ARIA_LEVEL_ATTR_NAME = 'aria-level';
     var ARIA_TREE_ROLE = 'tree', ARIA_TREEITEM_ROLE = 'treeitem', ARIA_GROUP_ROLE = 'group';
     var ARIA_SELECTED_ATTR = 'aria-selected', ARIA_EXPANDED_ATTR='aria-expanded', ARIA_ACTIVEDESCENDANT_ATTR='aria-activedescendant';
+    var EXPANDED_ITEM_SELECTOR = 'li[aria-expanded="true"]', ITEM_SELECTED_SELECTOR = '[aria-selected="true"]';
     var HAS_CHILDREN_CLASS = 'at-has-children', HAS_CHILDREN_CLASS_SELECTOR = '.' + HAS_CHILDREN_CLASS;
     var NO_CHILDREN_CLASS = 'at-no-children';
     var TOGGLE_CLASS = 'at-toggle', TOGGLE_CLASS_SELECTOR = '.' + TOGGLE_CLASS;
@@ -72,7 +73,7 @@
         handleKeys : function($tree) {
             var self = this;
             $tree.on(KEYDOWN_EVENT, function(event) {
-                var $currentFocusedElement = $tree.find('[aria-selected="true"]');
+                var $currentFocusedElement = $tree.find(ITEM_SELECTED_SELECTOR);
                 if (self.isKey(event, DOWN_ARROW_KEY)) {
                     event.preventDefault();
                     self.handleDownArrowKey($currentFocusedElement, $tree);
@@ -163,7 +164,7 @@
             var $lastListItemInTree = $tree.find(LIST_ITEM_SELECTOR).last();
             var $listWithLastListItemInTree = $lastListItemInTree.parent(LIST_SELECTOR);
             if (!this.isParentTree($listWithLastListItemInTree)) {
-                var $closestExpandedListItem = $lastListItemInTree.closest('li[aria-expanded="true"]');
+                var $closestExpandedListItem = $lastListItemInTree.closest(EXPANDED_ITEM_SELECTOR);
                 if ($closestExpandedListItem.length === 0) {
                     $listWithLastListItemInTree = $tree;
                 } else {
