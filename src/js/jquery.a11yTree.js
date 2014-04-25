@@ -144,8 +144,8 @@
         focusOn : function($item, $tree) {
             if ($item.length === 1) {
                 $tree.find('li').attr(ARIA_SELECTED_ATTR,'false');
+                $tree.attr('aria-activedescendant', $item.attr('id'));
                 $item.attr(ARIA_SELECTED_ATTR,'true');
-                //$tree.attr('aria-activedescendant', $item.attr('id'));
             }
         },
         focusOnNextAvailableSiblingInTree : function($item, $tree) {

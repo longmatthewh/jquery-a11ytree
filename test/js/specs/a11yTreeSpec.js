@@ -9,12 +9,20 @@ describe('a11yTree plugin', function () {
     const HAS_CHILDREN_CLASS = 'at-has-children', HAS_CHILDREN_CLASS_SELECTOR = '.' + HAS_CHILDREN_CLASS;
     const TOGGLE_CLASS_SELECTOR = '.at-toggle';
 
+    var $firstLevel1Item, $firstLevel2Item, $secondLevel1Item, $secondLevel2Item, $secondLevel3Item;
+
     beforeEach(function () {
         var htmlContent = '<div id="main"></div>';
         $('body').append(htmlContent);
         appendList(MAIN_SELECTOR, LEVEL_1_ID, 2);
         appendList(LEVEL_1_ID_SELECTOR + ' > li:nth-child(1)', LEVEL_2_ID, 2);
         appendList(LEVEL_2_ID_SELECTOR + ' > li:nth-child(1)', LEVEL_3_ID, 2);
+
+        $firstLevel1Item = getNthItemInList(LEVEL_1_ID_SELECTOR, 1);
+        $firstLevel2Item = getNthItemInList(LEVEL_2_ID_SELECTOR, 1);
+        $secondLevel1Item = getNthItemInList(LEVEL_1_ID_SELECTOR, 2);
+        $secondLevel2Item = getNthItemInList(LEVEL_2_ID_SELECTOR, 2);
+        $secondLevel3Item = getNthItemInList(LEVEL_3_ID_SELECTOR, 2);
     });
 
     afterEach(function () {
@@ -23,16 +31,8 @@ describe('a11yTree plugin', function () {
 
     describe('used on a parent ul element', function () {
 
-        var $firstLevel1Item, $firstLevel2Item, $secondLevel1Item, $secondLevel2Item, $secondLevel3Item;
-
         beforeEach(function () {
             $(LEVEL_1_ID_SELECTOR).a11yTree();
-
-            $firstLevel1Item = getNthItemInList(LEVEL_1_ID_SELECTOR, 1);
-            $firstLevel2Item = getNthItemInList(LEVEL_2_ID_SELECTOR, 1);
-            $secondLevel1Item = getNthItemInList(LEVEL_1_ID_SELECTOR, 2);
-            $secondLevel2Item = getNthItemInList(LEVEL_2_ID_SELECTOR, 2);
-            $secondLevel3Item = getNthItemInList(LEVEL_3_ID_SELECTOR, 2);
         });
 
         it('identifies the parent tree', function () {
@@ -131,10 +131,6 @@ describe('a11yTree plugin', function () {
                     it('adds only main tree item to the tab order', function() {
                         expect($(LEVEL_1_ID_SELECTOR).attr('tabindex')).toBe('0');
                         expect($(LEVEL_1_ID_SELECTOR).find('li[tabindex="0"]').length).toBe(0);
-                    });
-
-                    xit('all list items in the tree are guarunteed not to be in the tab order, but are focusable', function() {
-                        expect($(LEVEL_1_ID_SELECTOR).find('li[tabindex="-1"]').length).toBe($(LEVEL_1_ID_SELECTOR).find('li').length);
                     });
                 });
 
@@ -318,7 +314,12 @@ describe('a11yTree plugin', function () {
             expect($('#at-n-1').length).toBe(1);
         });
 
-        it('updates ');
+        it('updates aria-activedescendant with item selected on change', function() {
+            $(LEVEL_1_ID_SELECTOR).a11yTree();
+            expect($(LEVEL_1_ID_SELECTOR).attr('aria-activedescendant')).toBe('at-n-0');
+            downArrowKey();
+            expect($(LEVEL_1_ID_SELECTOR).attr('aria-activedescendant')).toBe('at-n-1');
+        });
     });
 
     describe('has options', function() {
@@ -373,7 +374,6 @@ describe('a11yTree plugin', function () {
                         }
                     }
                 );
-                $firstLevel1Item = getNthItemInList(LEVEL_1_ID_SELECTOR, 1);
                 focusOnItem($firstLevel1Item);
             });
 
