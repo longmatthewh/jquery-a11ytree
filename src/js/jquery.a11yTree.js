@@ -224,7 +224,7 @@
                 $listItem.addClass(NO_CHILDREN_CLASS);
             }
         },
-        identifyChildren : function($list, listRole, nestingLevel, parentListItemPos) {
+        identifyChildren : function($list, listRole, nestingLevel) {
             var self = this;
             $list.attr(ROLE_ATTR_NAME, listRole);
             var $listItems = $list.children(LIST_ITEM_SELECTOR);
@@ -249,12 +249,12 @@
         },
         generateListItemId : function($listItem, $list) {
             var id;
-            if ($list.parent('li').length === 0) {
+            if ($list.parent(LIST_ITEM_SELECTOR).length === 0) {
                 id = 'at-n';
             } else {
-                id = $listItem.data('at-identity') || $list.parent('li').attr('id');
+                id = $listItem.data('at-identity') || $list.parent(LIST_ITEM_SELECTOR).attr('id');
             }
-            return id + '-' + $list.children('li').index($listItem);
+            return id + '-' + $list.children(LIST_ITEM_SELECTOR).index($listItem);
         }
     };
 
