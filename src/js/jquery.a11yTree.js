@@ -2,11 +2,12 @@
     var PLUGIN_NAME = 'a11yTree';
     var PLUGIN_PREFIX = 'plugin_';
     var LIST_SELECTOR = 'ul', LIST_ITEM_SELECTOR = 'li';
+    var ID_ATTR_NAME = 'id', ITEM_ID_PREFIX = 'at-n', ITEM_ID_DATA_ATTR = 'at-identity';
     var TABINDEX_ATTR_NAME = 'tabindex';
     var KEYDOWN_EVENT = 'keydown', CLICK_EVENT = 'click';
     var ROLE_ATTR_NAME = 'role', ARIA_LEVEL_ATTR_NAME = 'aria-level';
     var ARIA_TREE_ROLE = 'tree', ARIA_TREEITEM_ROLE = 'treeitem', ARIA_GROUP_ROLE = 'group';
-    var ARIA_SELECTED_ATTR = 'aria-selected', ARIA_EXPANDED_ATTR='aria-expanded';
+    var ARIA_SELECTED_ATTR = 'aria-selected', ARIA_EXPANDED_ATTR='aria-expanded', ARIA_ACTIVEDESCENDANT_ATTR='aria-activedescendant';
     var HAS_CHILDREN_CLASS = 'at-has-children', HAS_CHILDREN_CLASS_SELECTOR = '.' + HAS_CHILDREN_CLASS;
     var NO_CHILDREN_CLASS = 'at-no-children';
     var TOGGLE_CLASS = 'at-toggle', TOGGLE_CLASS_SELECTOR = '.' + TOGGLE_CLASS;
@@ -143,9 +144,10 @@
         },
         focusOn : function($item, $tree) {
             if ($item.length === 1) {
-                $tree.find('li').attr(ARIA_SELECTED_ATTR,'false');
-                $tree.attr('aria-activedescendant', $item.attr('id'));
+                $tree.find(LIST_ITEM_SELECTOR).attr(ARIA_SELECTED_ATTR,'false');
                 $item.attr(ARIA_SELECTED_ATTR,'true');
+                $tree.attr(ARIA_ACTIVEDESCENDANT_ATTR, $item.attr(ID_ATTR_NAME));
+
             }
         },
         focusOnNextAvailableSiblingInTree : function($item, $tree) {
@@ -240,19 +242,19 @@
             this.addIdAsDataOrId($listItem, useId);
         },
         addIdAsDataOrId : function($listItem, useId) {
-            var existingId = $listItem.attr('id');
+            var existingId = $listItem.attr(ID_ATTR_NAME);
             if (!existingId) {
-                $listItem.attr('id', useId);
+                $listItem.attr(ID_ATTR_NAME, useId);
             } else {
-                $listItem.data('at-identity',useId);
+                $listItem.data(ITEM_ID_DATA_ATTR,useId);
             }
         },
         generateListItemId : function($listItem, $list) {
             var id;
             if ($list.parent(LIST_ITEM_SELECTOR).length === 0) {
-                id = 'at-n';
+                id = ITEM_ID_PREFIX;
             } else {
-                id = $listItem.data('at-identity') || $list.parent(LIST_ITEM_SELECTOR).attr('id');
+                id = $listItem.data(ITEM_ID_DATA_ATTR) || $list.parent(LIST_ITEM_SELECTOR).attr(ID_ATTR_NAME);
             }
             return id + '-' + $list.children(LIST_ITEM_SELECTOR).index($listItem);
         }
