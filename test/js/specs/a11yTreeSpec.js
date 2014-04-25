@@ -44,6 +44,7 @@ describe('a11yTree plugin', function () {
             expect($('[role="treeitem"]').length).toBe($('li[role="treeitem"]').length);
         });
 
+
         it('identifies the appropriate nested level for each tree item', function () {
             expect($('[aria-level]').length).toBe(6);
             verifyAriaLevelForChildren(LEVEL_1_ID_SELECTOR, 1, 2);
@@ -291,6 +292,14 @@ describe('a11yTree plugin', function () {
                     });
                 });
             });
+        });
+    });
+
+    describe('keeps track of the item selected at the tree level', function() {
+        it('adds an id to all elements in tree', function() {
+            expect($(LEVEL_1_ID_SELECTOR).find('li[id]').length).toBe(0);
+            $(LEVEL_1_ID_SELECTOR).a11yTree();
+            expect($(LEVEL_1_ID_SELECTOR).find('li[id]').length).toBe($(LEVEL_1_ID_SELECTOR).find('li').length);
         });
     });
 

@@ -97,7 +97,6 @@
         },
         addTreeToTabOrder : function($tree) {
             $tree.attr(TABINDEX_ATTR_NAME, '0');
-            $tree.find(LIST_ITEM_SELECTOR).attr(TABINDEX_ATTR_NAME, '-1');
         },
         handleLeftArrowKey : function($item, $tree) {
             if (this.isExpanded($item)) {
@@ -146,8 +145,7 @@
             if ($item.length === 1) {
                 $tree.find('li').attr(ARIA_SELECTED_ATTR,'false');
                 $item.attr(ARIA_SELECTED_ATTR,'true');
-                $item.focus();
-                $tree.focus();
+                //$tree.attr('aria-activedescendant', $item.attr('id'));
             }
         },
         focusOnNextAvailableSiblingInTree : function($item, $tree) {
@@ -217,6 +215,7 @@
             $listItem.addClass(HAS_CHILDREN_CLASS);
         },
         identifySubChildren : function($listItem, nestingLevel) {
+
             var $childList = $listItem.children(LIST_SELECTOR);
             if ($childList.length > 0) {
                 this.identifyListItemWithChildren($listItem);
@@ -231,8 +230,13 @@
             var $listItems = $list.children(LIST_ITEM_SELECTOR);
             $listItems.attr(ROLE_ATTR_NAME,ARIA_TREEITEM_ROLE).attr(ARIA_LEVEL_ATTR_NAME,nestingLevel);
             $listItems.each(function() {
+                self.addIdToListItem($(this), $list, nestingLevel);
                 self.identifySubChildren($(this), nestingLevel);
             });
+        },
+        addIdToListItem : function($listItem, $list, nestingLevel) {
+            var id = 'at-tree-level-' + nestingLevel + '-node-' + $list.children('li').index($listItem);
+            $listItem.attr('id', id);
         }
     };
 
