@@ -14,6 +14,7 @@ describe('a11yTree plugin', function () {
     beforeEach(function () {
         var htmlContent = '<div id="main"></div>';
         $('body').append(htmlContent);
+        $('#main').append('<h2 id="this-tree-label">My Tree</h2>');
         appendList(MAIN_SELECTOR, LEVEL_1_ID, 2);
         appendList(LEVEL_1_ID_SELECTOR + ' > li:nth-child(1)', LEVEL_2_ID, 2);
         appendList(LEVEL_2_ID_SELECTOR + ' > li:nth-child(1)', LEVEL_3_ID, 2);
@@ -336,6 +337,17 @@ describe('a11yTree plugin', function () {
                     }
                 );
                 expect($('.at-toggle').length).toBe(0);
+            });
+        });
+
+        describe('tree-label', function() {
+            it('associates tree with label when exists', function() {
+                $(LEVEL_1_ID_SELECTOR).a11yTree(
+                    {
+                        treeLabel :'this-tree-label'
+                    }
+                );
+                expect($(LEVEL_1_ID_SELECTOR).attr('aria-labelledby')).toBe('this-tree-label');
             });
         });
 
