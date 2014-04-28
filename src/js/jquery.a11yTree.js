@@ -16,6 +16,7 @@
 
     defaults = {
         treeLabel : undefined,
+        treeItemLabelSelector : undefined,
         insertToggle : true,
         customToggle : {
             html : undefined
@@ -252,10 +253,24 @@
         },
         addIdAsDataOrId : function($listItem, useId) {
             var existingId = $listItem.attr(ID_ATTR_NAME);
+            var nodeLabelIdPrefix = useId;
             if (!existingId) {
                 $listItem.attr(ID_ATTR_NAME, useId);
             } else {
+                nodeLabelIdPrefix = existingId;
                 $listItem.data(ITEM_ID_DATA_ATTR,useId);
+            }
+            this.addIdToNodeLabel($listItem, nodeLabelIdPrefix);
+
+        },
+        addIdToNodeLabel : function($listItem, nodeLabelIdPrefix) {
+            var treeItemLabelSelector = this.options.treeItemLabelSelector;
+            if (treeItemLabelSelector) {
+                var $treeItemLabel = $listItem.children(treeItemLabelSelector);
+                var existingId = $treeItemLabel.attr(ID_ATTR_NAME);
+                if (!existingId) {
+                    $treeItemLabel.attr(ID_ATTR_NAME, nodeLabelIdPrefix + '-label');
+                }
             }
         },
         generateListItemId : function($listItem, $list) {

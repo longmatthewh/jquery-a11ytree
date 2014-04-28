@@ -331,32 +331,33 @@ describe('a11yTree plugin', function () {
             });
 
             it('does not insert toggle into DOM when set to false', function() {
-                $(LEVEL_1_ID_SELECTOR).a11yTree(
-                    {
-                        insertToggle : false
-                    }
-                );
+                $(LEVEL_1_ID_SELECTOR).a11yTree({insertToggle : false});
                 expect($('.at-toggle').length).toBe(0);
             });
         });
 
         describe('treeLabel', function() {
             it('associates tree with label when exists', function() {
-                $(LEVEL_1_ID_SELECTOR).a11yTree(
-                    {
-                        treeLabel :'this-tree-label'
-                    }
-                );
+                $(LEVEL_1_ID_SELECTOR).a11yTree({treeLabel :'this-tree-label'});
                 expect($(LEVEL_1_ID_SELECTOR).attr('aria-labelledby')).toBe('this-tree-label');
             });
 
             it('does not associate tree with label if does not exists', function() {
-                $(LEVEL_1_ID_SELECTOR).a11yTree(
-                    {
-                        treeLabel :'this-tree-label-no-exist'
-                    }
-                );
+                $(LEVEL_1_ID_SELECTOR).a11yTree({treeLabel :'this-tree-label-no-exist'});
                 expect($(LEVEL_1_ID_SELECTOR).attr('aria-labelledby')).toBe(undefined);
+            });
+        });
+
+        describe('treeItemLabelSelector', function() {
+            it('adds a unique id to each item found by selector', function() {
+                //$(LEVEL_1_ID_SELECTOR).find(' > li:first-child').find('tree-item-node').attr('id','first-node-label');
+                $(LEVEL_1_ID_SELECTOR).a11yTree({treeItemLabelSelector :'.tree-item-node'});
+                expect($('#at-n-0-label').length).toBe(1);
+                expect($('#at-n-0-0-label').length).toBe(1);
+                expect($('#at-n-0-0-0-label').length).toBe(1);
+                expect($('#at-n-0-0-1-label').length).toBe(1);
+                expect($('#at-n-0-1-label').length).toBe(1);
+                expect($('#at-n-1-label').length).toBe(1);
             });
         });
 
@@ -505,7 +506,7 @@ describe('a11yTree plugin', function () {
     function createListItems(listId, numberOfListItems) {
         var listItemsHtml = '';
         for (var listItem = 1; listItem <= numberOfListItems; listItem++) {
-            listItemsHtml += '<li>' + listId + ' ' + listItem + '</li>';
+            listItemsHtml += '<li><span class="tree-item-node">' + listId + ' ' + listItem + '</span></li>';
         }
         return listItemsHtml;
     }
