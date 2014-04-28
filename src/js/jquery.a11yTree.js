@@ -15,7 +15,7 @@
     var DOWN_ARROW_KEY = 40, UP_ARROW_KEY = 38, RIGHT_ARROW_KEY = 39, LEFT_ARROW_KEY = 37, ENTER_KEY=13, END_KEY=35, HOME_KEY=36;
 
     defaults = {
-        treeLabel : undefined,
+        treeLabelId : undefined,
         treeItemLabelSelector : undefined,
         insertToggle : true,
         customToggle : {
@@ -35,16 +35,16 @@
     Plugin.prototype = {
         init : function () {
             var $tree = $(this.element);
-            this.addTreeLabel($tree);
             this.identifyChildren($tree, ARIA_TREE_ROLE, 1);
+            this.addTreeLabels($tree);
             this.addToggle($tree);
             this.addMouseNav($tree);
             this.addKeyBoardNav($tree);
         },
-        addTreeLabel : function($tree) {
-            var treeLabel = this.options.treeLabel;
-            if (treeLabel && $('#' + treeLabel).length > 0) {
-                $tree.attr(ARIA_LABELLEDBY_ATTR,treeLabel);
+        addTreeLabels : function($tree) {
+            var treeLabelId = this.options.treeLabelId;
+            if (treeLabelId && $('#' + treeLabelId).length > 0) {
+                $tree.attr(ARIA_LABELLEDBY_ATTR,treeLabelId);
             }
         },
         addToggle : function($tree) {
