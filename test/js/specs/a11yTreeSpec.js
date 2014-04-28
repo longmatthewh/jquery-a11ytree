@@ -340,7 +340,7 @@ describe('a11yTree plugin', function () {
             });
         });
 
-        describe('tree-label', function() {
+        describe('treeLabel', function() {
             it('associates tree with label when exists', function() {
                 $(LEVEL_1_ID_SELECTOR).a11yTree(
                     {
@@ -348,6 +348,15 @@ describe('a11yTree plugin', function () {
                     }
                 );
                 expect($(LEVEL_1_ID_SELECTOR).attr('aria-labelledby')).toBe('this-tree-label');
+            });
+
+            it('does not associate tree with label if does not exists', function() {
+                $(LEVEL_1_ID_SELECTOR).a11yTree(
+                    {
+                        treeLabel :'this-tree-label-no-exist'
+                    }
+                );
+                expect($(LEVEL_1_ID_SELECTOR).attr('aria-labelledby')).toBe(undefined);
             });
         });
 

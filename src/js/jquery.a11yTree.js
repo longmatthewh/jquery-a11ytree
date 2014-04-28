@@ -42,7 +42,7 @@
         },
         addTreeLabel : function($tree) {
             var treeLabel = this.options.treeLabel;
-            if (treeLabel) {
+            if (treeLabel && $('#' + treeLabel).length > 0) {
                 $tree.attr(ARIA_LABELLEDBY_ATTR,treeLabel);
             }
         },
