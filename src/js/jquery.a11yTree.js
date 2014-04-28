@@ -42,9 +42,21 @@
             this.addKeyBoardNav($tree);
         },
         addTreeLabels : function($tree) {
-            var treeLabelId = this.options.treeLabelId;
+            var self = this;
+            var treeLabelId = self.options.treeLabelId;
             if (treeLabelId && $('#' + treeLabelId).length > 0) {
                 $tree.attr(ARIA_LABELLEDBY_ATTR,treeLabelId);
+            }
+
+            var treeItemLabelSelector = this.options.treeItemLabelSelector;
+            if (treeItemLabelSelector) {
+                var $treeItems =  $tree.find(HAS_CHILDREN_CLASS_SELECTOR);
+                $treeItems.each(function() {
+                    var labelId = $(this).children(treeItemLabelSelector).attr('id');
+                    if (labelId) {
+                        $(this).children('ul').attr(ARIA_LABELLEDBY_ATTR,labelId);
+                    }
+                });
             }
         },
         addToggle : function($tree) {

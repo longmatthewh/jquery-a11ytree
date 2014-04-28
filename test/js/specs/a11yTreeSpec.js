@@ -346,11 +346,11 @@ describe('a11yTree plugin', function () {
                 $(LEVEL_1_ID_SELECTOR).a11yTree({treeLabelId :'this-tree-label-no-exist'});
                 expect($(LEVEL_1_ID_SELECTOR).attr('aria-labelledby')).toBe(undefined);
             });
+
         });
 
         describe('treeItemLabelSelector', function() {
             it('adds a unique id to each item found by selector', function() {
-                //$(LEVEL_1_ID_SELECTOR).find(' > li:first-child').find('tree-item-node').attr('id','first-node-label');
                 $(LEVEL_1_ID_SELECTOR).a11yTree({treeItemLabelSelector :'.tree-item-node'});
                 expect($('#at-n-0-label').length).toBe(1);
                 expect($('#at-n-0-0-label').length).toBe(1);
@@ -358,6 +358,13 @@ describe('a11yTree plugin', function () {
                 expect($('#at-n-0-0-1-label').length).toBe(1);
                 expect($('#at-n-0-1-label').length).toBe(1);
                 expect($('#at-n-1-label').length).toBe(1);
+            });
+
+            it('adds aria-labelledby only to items that have children', function() {
+                $(LEVEL_1_ID_SELECTOR).a11yTree({treeItemLabelSelector :'.tree-item-node'});
+                expect($(LEVEL_1_ID_SELECTOR).find('[aria-labelledby]').length).toBe(2);
+                expect($(LEVEL_2_ID_SELECTOR).attr('aria-labelledby')).toBe('at-n-0-label');
+                expect($(LEVEL_3_ID_SELECTOR).attr('aria-labelledby')).toBe('at-n-0-0-label');
             });
         });
 
