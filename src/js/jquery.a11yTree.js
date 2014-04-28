@@ -52,9 +52,9 @@
             if (treeItemLabelSelector) {
                 var $treeItems =  $tree.find(HAS_CHILDREN_CLASS_SELECTOR);
                 $treeItems.each(function() {
-                    var labelId = $(this).children(treeItemLabelSelector).attr('id');
+                    var labelId = $(this).children(treeItemLabelSelector).attr(ID_ATTR_NAME);
                     if (labelId) {
-                        $(this).children('ul').attr(ARIA_LABELLEDBY_ATTR,labelId);
+                        $(this).children(LIST_SELECTOR).attr(ARIA_LABELLEDBY_ATTR,labelId);
                     }
                 });
             }
