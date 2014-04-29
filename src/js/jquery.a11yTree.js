@@ -2,7 +2,7 @@
     var PLUGIN_NAME = 'a11yTree';
     var PLUGIN_PREFIX = 'plugin_';
     var LIST_SELECTOR = 'ul', LIST_ITEM_SELECTOR = 'li';
-    var ID_ATTR_NAME = 'id', ITEM_ID_PREFIX = 'at-n', ITEM_ID_DATA_ATTR = 'at-identity';
+    var ID_ATTR_NAME = 'id', ITEM_ID_PREFIX = 'at-n', ITEM_ID_DATA_ATTR = 'at-identity', NODE_LABEL_SUFFIX = '-label';
     var TABINDEX_ATTR_NAME = 'tabindex';
     var KEYDOWN_EVENT = 'keydown', CLICK_EVENT = 'click';
     var ROLE_ATTR_NAME = 'role', ARIA_LEVEL_ATTR_NAME = 'aria-level';
@@ -52,9 +52,10 @@
             if (treeItemLabelSelector) {
                 var $treeItems =  $tree.find(HAS_CHILDREN_CLASS_SELECTOR);
                 $treeItems.each(function() {
-                    var labelId = $(this).children(treeItemLabelSelector).attr(ID_ATTR_NAME);
+                    var $treeItem = $(this);
+                    var labelId = $treeItem.children(treeItemLabelSelector).attr(ID_ATTR_NAME);
                     if (labelId) {
-                        $(this).children(LIST_SELECTOR).attr(ARIA_LABELLEDBY_ATTR,labelId);
+                        $treeItem.children(LIST_SELECTOR).attr(ARIA_LABELLEDBY_ATTR,labelId);
                     }
                 });
             }
@@ -84,7 +85,7 @@
             });
         },
         addKeyBoardNav : function($tree) {
-            this.focusOn($tree.find(' > li:nth-child(1)'),$tree);
+            this.focusOn(this.findFirstListItem($tree),$tree);
             this.addTreeToTabOrder($tree);
             this.handleKeys($tree);
         },
@@ -138,7 +139,7 @@
         handleUpArrowKey : function($item, $tree) {
             var $prevSibling = $item.prev();
             if (this.isExpanded($prevSibling)) {
-                this.focusOnLastVisibleElementInTree($prevSibling.children('ul'), $tree);
+                this.focusOnLastVisibleElementInTree($prevSibling.children(LIST_SELECTOR), $tree);
             } else if ($item.prev().length === 0) {
                 this.focusOn(this.findParent($item), $tree);
             } else {
@@ -169,7 +170,6 @@
                 $tree.find(LIST_ITEM_SELECTOR).attr(ARIA_SELECTED_ATTR,'false');
                 $item.attr(ARIA_SELECTED_ATTR,'true');
                 $tree.attr(ARIA_ACTIVEDESCENDANT_ATTR, $item.attr(ID_ATTR_NAME));
-
             }
         },
         focusOnNextAvailableSiblingInTree : function($item, $tree) {
@@ -232,14 +232,13 @@
             return $list.find(' > li:first-child');
         },
         findFirstListItemInSubList : function($item) {
-            return $item.children(LIST_SELECTOR).find(' > li:nth-child(1)');
+            return $item.children(LIST_SELECTOR).find(' > li:first-child');
         },
         identifyListItemWithChildren : function($listItem) {
             this.collapse($listItem);
             $listItem.addClass(HAS_CHILDREN_CLASS);
         },
         identifySubChildren : function($listItem, $parentList, nestingLevel) {
-
             var $childList = $listItem.children(LIST_SELECTOR);
             if ($childList.length > 0) {
                 this.identifyListItemWithChildren($listItem);
@@ -281,7 +280,7 @@
                 var $treeItemLabel = $listItem.children(treeItemLabelSelector);
                 var existingId = $treeItemLabel.attr(ID_ATTR_NAME);
                 if (!existingId) {
-                    $treeItemLabel.attr(ID_ATTR_NAME, nodeLabelIdPrefix + '-label');
+                    $treeItemLabel.attr(ID_ATTR_NAME, nodeLabelIdPrefix + NODE_LABEL_SUFFIX);
                 }
             }
         },
