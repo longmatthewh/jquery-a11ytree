@@ -7,9 +7,12 @@
         "accessibility",
         "a11y",
         "ARIA",
-        "keyboard"
+        "keyboard",
+        "navigation",
+        "lists",
+        "nested"
     ],
-    "version": "1.1.0",
+    "version": "1.1.1",
     "author": {
         "name": "Matt Long",
         "email": "longmatthewh@gmail.com"
