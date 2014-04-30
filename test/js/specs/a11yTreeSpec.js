@@ -9,7 +9,7 @@ describe('a11yTree plugin', function () {
     const HAS_CHILDREN_CLASS = 'at-has-children', HAS_CHILDREN_CLASS_SELECTOR = '.' + HAS_CHILDREN_CLASS;
     const TOGGLE_CLASS_SELECTOR = '.at-toggle';
 
-    var $firstLevel1Item, $firstLevel2Item, $secondLevel1Item, $secondLevel2Item, $secondLevel3Item;
+    var $firstLevel1Item, $firstLevel2Item, $secondLevel1Item, $secondLevel2Item, $firstLevel3Item, $secondLevel3Item;
 
     beforeEach(function () {
         var htmlContent = '<div id="main"></div>';
@@ -23,6 +23,7 @@ describe('a11yTree plugin', function () {
         $firstLevel2Item = getNthItemInList(LEVEL_2_ID_SELECTOR, 1);
         $secondLevel1Item = getNthItemInList(LEVEL_1_ID_SELECTOR, 2);
         $secondLevel2Item = getNthItemInList(LEVEL_2_ID_SELECTOR, 2);
+        $firstLevel3Item = getNthItemInList(LEVEL_3_ID_SELECTOR, 1);
         $secondLevel3Item = getNthItemInList(LEVEL_3_ID_SELECTOR, 2);
     });
 
@@ -227,7 +228,7 @@ describe('a11yTree plugin', function () {
                     });
                 });
 
-                describe('using the right arrow key', function() {
+                describe('using the left arrow key', function() {
                     it('collapses the child list when exists in the tree', function() {
                         focusOnItem($firstLevel1Item);
                         rightArrowKey();
@@ -241,6 +242,8 @@ describe('a11yTree plugin', function () {
                         rightArrowKey();
                         rightArrowKey();
                         rightArrowKey();
+                        rightArrowKey();
+                        isOnlyItemInFocus($firstLevel3Item);
                         leftArrowKey();
                         isOnlyItemInFocus($firstLevel2Item);
                     });
@@ -275,6 +278,26 @@ describe('a11yTree plugin', function () {
                         isOnlyItemInFocus($firstLevel2Item);
                         endKey();
                         isOnlyItemInFocus($secondLevel2Item);
+                    });
+
+                    it('selects the last expanded element when the element is the last element of the last expanded element where last node has children and is collapsed', function() {
+                        $(LEVEL_1_ID_SELECTOR).remove();
+                        appendList(MAIN_SELECTOR, LEVEL_1_ID, 2);
+                        appendList(LEVEL_1_ID_SELECTOR + ' > li:nth-child(1)', LEVEL_2_ID, 2);
+                        appendList(LEVEL_2_ID_SELECTOR + ' > li:nth-child(1)', LEVEL_3_ID, 2);
+                        appendList(LEVEL_1_ID_SELECTOR + ' > li:nth-child(2)', LEVEL_2_ID + 'b', 2);
+                        $firstLevel1Item = getNthItemInList(LEVEL_1_ID_SELECTOR, 1);
+                        $firstLevel2Item = getNthItemInList(LEVEL_2_ID_SELECTOR, 1);
+                        $secondLevel1Item = getNthItemInList(LEVEL_1_ID_SELECTOR, 2);
+                        $secondLevel2Item = getNthItemInList(LEVEL_2_ID_SELECTOR, 2);
+                        $firstLevel3Item = getNthItemInList(LEVEL_3_ID_SELECTOR, 1);
+                        $secondLevel3Item = getNthItemInList(LEVEL_3_ID_SELECTOR, 2);
+
+                        $(LEVEL_1_ID_SELECTOR).a11yTree();
+                        focusOnItem($firstLevel1Item);
+                        isOnlyItemInFocus($firstLevel1Item);
+                        endKey();
+                        isOnlyItemInFocus($secondLevel1Item);
                     });
                 });
 
