@@ -68,7 +68,7 @@
             }
 
             if (self.options.toggleSelector) {
-                $tree.find(self.options.toggleSelector).addClass(TOGGLE_CLASS);
+                $tree.find(self.options.toggleSelector).addClass(TOGGLE_CLASS).attr('aria-hidden','true');
             } else {
                 var toggleHtml = '';
                 if (self.options.customToggle.html) {

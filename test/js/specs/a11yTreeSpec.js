@@ -360,10 +360,17 @@ describe('a11yTree plugin', function () {
         });
 
         describe('toggleSelector', function() {
-            it('adds plugin toggle class to existing toggle', function() {
+            beforeEach(function() {
                 $(LEVEL_1_ID_SELECTOR).find('ul').parent('li').append('<i class="fa fa-plus-square-o"></i>');
                 $(LEVEL_1_ID_SELECTOR).a11yTree({toggleSelector : 'i.fa'});
+            });
+
+            it('adds plugin toggle class to existing toggle', function() {
                 expect($('i.fa.at-toggle').length).toBe(2);
+            });
+
+            it('hides existing toggle from assistive technology', function() {
+                expect($('i.fa.at-toggle[aria-hidden="true"]').length).toBe(2);
             });
         });
 
