@@ -359,6 +359,14 @@ describe('a11yTree plugin', function () {
             });
         });
 
+        describe('toggleSelector', function() {
+            it('adds plugin toggle class to existing toggle', function() {
+                $(LEVEL_1_ID_SELECTOR).find('ul').parent('li').append('<i class="fa fa-plus-square-o"></i>');
+                $(LEVEL_1_ID_SELECTOR).a11yTree({toggleSelector : 'i.fa'});
+                expect($('i.fa.at-toggle').length).toBe(2);
+            });
+        });
+
         describe('treeLabelId', function() {
             it('associates tree with label when exists', function() {
                 $(LEVEL_1_ID_SELECTOR).a11yTree({treeLabelId :'this-tree-label'});

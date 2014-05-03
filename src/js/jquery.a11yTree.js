@@ -17,6 +17,7 @@
     defaults = {
         treeLabelId : undefined,
         treeItemLabelSelector : undefined,
+        toggleSelector : undefined,
         insertToggle : true,
         customToggle : {
             html : undefined
@@ -66,12 +67,17 @@
                 return;
             }
 
-            var toggleHtml = '';
-            if (self.options.customToggle.html) {
-                toggleHtml = self.options.customToggle.html;
+            if (self.options.toggleSelector) {
+                $tree.find(self.options.toggleSelector).addClass(TOGGLE_CLASS);
+            } else {
+                var toggleHtml = '';
+                if (self.options.customToggle.html) {
+                    toggleHtml = self.options.customToggle.html;
+                }
+                $tree.find(HAS_CHILDREN_CLASS_SELECTOR).prepend('<div class="' + TOGGLE_CLASS  + '" aria-hidden="true">' + toggleHtml + '</div>');
             }
 
-            $tree.find(HAS_CHILDREN_CLASS_SELECTOR).prepend('<div class="' + TOGGLE_CLASS  + '" aria-hidden="true">' + toggleHtml + '</div>');
+
             $tree.find(TOGGLE_CLASS_SELECTOR).on(CLICK_EVENT, function(event) {
                 var $listItemWithToggle = $(this).parent(LIST_ITEM_SELECTOR);
                 self.toggleExpandCollapse($listItemWithToggle);
