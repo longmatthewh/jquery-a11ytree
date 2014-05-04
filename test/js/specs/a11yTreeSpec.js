@@ -280,24 +280,29 @@ describe('a11yTree plugin', function () {
                         isOnlyItemInFocus($secondLevel2Item);
                     });
 
-                    it('selects the last expanded element when the element is the last element of the last expanded element where last node has children and is collapsed', function() {
-                        $(LEVEL_1_ID_SELECTOR).remove();
-                        appendList(MAIN_SELECTOR, LEVEL_1_ID, 2);
-                        appendList(LEVEL_1_ID_SELECTOR + ' > li:nth-child(1)', LEVEL_2_ID, 2);
-                        appendList(LEVEL_2_ID_SELECTOR + ' > li:nth-child(1)', LEVEL_3_ID, 2);
-                        appendList(LEVEL_1_ID_SELECTOR + ' > li:nth-child(2)', LEVEL_2_ID + 'b', 2);
-                        $firstLevel1Item = getNthItemInList(LEVEL_1_ID_SELECTOR, 1);
-                        $firstLevel2Item = getNthItemInList(LEVEL_2_ID_SELECTOR, 1);
-                        $secondLevel1Item = getNthItemInList(LEVEL_1_ID_SELECTOR, 2);
-                        $secondLevel2Item = getNthItemInList(LEVEL_2_ID_SELECTOR, 2);
-                        $firstLevel3Item = getNthItemInList(LEVEL_3_ID_SELECTOR, 1);
-                        $secondLevel3Item = getNthItemInList(LEVEL_3_ID_SELECTOR, 2);
+                    describe('tree with sub trees in last main tree item', function() {
 
-                        $(LEVEL_1_ID_SELECTOR).a11yTree();
-                        focusOnItem($firstLevel1Item);
-                        isOnlyItemInFocus($firstLevel1Item);
-                        endKey();
-                        isOnlyItemInFocus($secondLevel1Item);
+                        beforeEach(function() {
+                            $(LEVEL_1_ID_SELECTOR).remove();
+                            appendList(MAIN_SELECTOR, LEVEL_1_ID, 2);
+                            appendList(LEVEL_1_ID_SELECTOR + ' > li:nth-child(1)', LEVEL_2_ID, 2);
+                            appendList(LEVEL_2_ID_SELECTOR + ' > li:nth-child(1)', LEVEL_3_ID, 2);
+                            appendList(LEVEL_1_ID_SELECTOR + ' > li:nth-child(2)', LEVEL_2_ID + 'b', 2);
+                            $firstLevel1Item = getNthItemInList(LEVEL_1_ID_SELECTOR, 1);
+                            $firstLevel2Item = getNthItemInList(LEVEL_2_ID_SELECTOR, 1);
+                            $secondLevel1Item = getNthItemInList(LEVEL_1_ID_SELECTOR, 2);
+                            $secondLevel2Item = getNthItemInList(LEVEL_2_ID_SELECTOR, 2);
+                            $firstLevel3Item = getNthItemInList(LEVEL_3_ID_SELECTOR, 1);
+                            $secondLevel3Item = getNthItemInList(LEVEL_3_ID_SELECTOR, 2);
+                        });
+
+                        it('selects the last expanded element when the element is the last element of the last expanded element where last node has children and is collapsed', function() {
+                            $(LEVEL_1_ID_SELECTOR).a11yTree();
+                            focusOnItem($firstLevel1Item);
+                            isOnlyItemInFocus($firstLevel1Item);
+                            endKey();
+                            isOnlyItemInFocus($secondLevel1Item);
+                        });
                     });
                 });
 
