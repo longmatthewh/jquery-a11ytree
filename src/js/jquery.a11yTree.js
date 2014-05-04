@@ -38,7 +38,7 @@
             var $tree = $(this.element);
             this.identifyChildren($tree, ARIA_TREE_ROLE, 1);
             this.addTreeLabels($tree);
-            this.addToggle($tree);
+            this.attachToggle($tree);
             this.addMouseNav($tree);
             this.addKeyBoardNav($tree);
         },
@@ -61,23 +61,24 @@
                 });
             }
         },
-        addToggle : function($tree) {
-            var self = this;
-            if (self.options.insertToggle === false) {
+        attachToggle : function($tree) {
+            if (this.options.insertToggle === false) {
                 return;
             }
 
-            if (self.options.toggleSelector) {
-                $tree.find(self.options.toggleSelector).addClass(TOGGLE_CLASS).attr('aria-hidden','true');
+            if (this.options.toggleSelector) {
+                $tree.find(this.options.toggleSelector).addClass(TOGGLE_CLASS).attr('aria-hidden','true');
             } else {
                 var toggleHtml = '';
-                if (self.options.customToggle.html) {
-                    toggleHtml = self.options.customToggle.html;
+                if (this.options.customToggle.html) {
+                    toggleHtml = this.options.customToggle.html;
                 }
                 $tree.find(HAS_CHILDREN_CLASS_SELECTOR).prepend('<div class="' + TOGGLE_CLASS  + '" aria-hidden="true">' + toggleHtml + '</div>');
             }
-
-
+            this.attachToggleClick($tree);
+        },
+        attachToggleClick : function($tree) {
+            var self = this;
             $tree.find(TOGGLE_CLASS_SELECTOR).on(CLICK_EVENT, function(event) {
                 var $listItemWithToggle = $(this).parent(LIST_ITEM_SELECTOR);
                 self.toggleExpandCollapse($listItemWithToggle);
