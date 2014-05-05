@@ -192,14 +192,21 @@
             var $lastListItemInTree = $tree.find(LIST_ITEM_SELECTOR).last();
             var $listWithLastListItemInTree = $lastListItemInTree.parent(LIST_SELECTOR);
             if (!this.isParentTree($listWithLastListItemInTree)) {
-                var $closestExpandedListItem = $lastListItemInTree.closest(EXPANDED_ITEM_SELECTOR);
-                if ($closestExpandedListItem.length === 0) {
-                    $listWithLastListItemInTree = $tree;
-                } else {
-                    $listWithLastListItemInTree = $closestExpandedListItem.children(LIST_SELECTOR);
-                }
+                $listWithLastListItemInTree = this.findClosestExpandedTree($tree, $lastListItemInTree);
             }
             this.focusOn(this.findLastListItem($listWithLastListItemInTree), $parentTree || $tree);
+        },
+        findClosestExpandedTree : function($tree, $listItem) {
+            var $closestExpandedListItem = $listItem.parent(LIST_SELECTOR).closest(EXPANDED_ITEM_SELECTOR);
+            if ($closestExpandedListItem.length === 0) {
+                return $tree;
+            }
+
+            var $parentOfClosestExpandedListItem = $closestExpandedListItem.parent(LIST_SELECTOR).closest(LIST_ITEM_SELECTOR);
+            if ($parentOfClosestExpandedListItem.length === 0 || this.isExpanded($parentOfClosestExpandedListItem)) {
+                return $closestExpandedListItem.children(LIST_SELECTOR);
+            }
+            return this.findClosestExpandedTree($tree, $closestExpandedListItem);
         },
         expand : function($item) {
             if (this.options.onExpand) {

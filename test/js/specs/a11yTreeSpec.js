@@ -303,6 +303,24 @@ describe('a11yTree plugin', function () {
                             endKey();
                             isOnlyItemInFocus($secondLevel1Item);
                         });
+
+                        it('selects the last expanded element when the element is the last element of the last expanded element where last node has children and is collapsed, but children list is expanded', function() {
+                            appendList(LEVEL_2_ID_SELECTOR + 'b > li:nth-child(2)', LEVEL_3_ID + 'b', 2);
+                            $(LEVEL_1_ID_SELECTOR).a11yTree();
+                            focusOnItem($firstLevel1Item);
+                            isOnlyItemInFocus($firstLevel1Item);
+                            downArrowKey();
+                            rightArrowKey();
+                            downArrowKey();
+                            downArrowKey();
+                            rightArrowKey();
+                            upArrowKey();
+                            upArrowKey();
+                            leftArrowKey();
+                            upArrowKey();
+                            endKey();
+                            isOnlyItemInFocus($secondLevel1Item);
+                        });
                     });
                 });
 
@@ -465,7 +483,7 @@ describe('a11yTree plugin', function () {
     });
 
     function triggerKeydown(key) {
-        var event = jQuery.Event('keydown');
+        var event = $.Event('keydown');
         event.which = key;
         $(LEVEL_1_ID_SELECTOR).trigger(event);
     }
@@ -506,7 +524,6 @@ describe('a11yTree plugin', function () {
     function isOnlyItemInFocus($item) {
         expect($(MAIN_SELECTOR).find('[aria-selected="true"]').length).toBe(1);
         expect($item.attr('aria-selected')).toBe('true');
-        //expect($item.is(':focus')).toBe(true);
     }
 
     function getNthItemInList(listSelector, idx) {
