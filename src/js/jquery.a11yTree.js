@@ -7,7 +7,7 @@
     var KEYDOWN_EVENT = 'keydown', CLICK_EVENT = 'click';
     var ROLE_ATTR_NAME = 'role', ARIA_LEVEL_ATTR_NAME = 'aria-level';
     var ARIA_TREE_ROLE = 'tree', ARIA_TREEITEM_ROLE = 'treeitem', ARIA_GROUP_ROLE = 'group';
-    var ARIA_SELECTED_ATTR = 'aria-selected', ARIA_EXPANDED_ATTR='aria-expanded', ARIA_ACTIVEDESCENDANT_ATTR='aria-activedescendant', ARIA_LABELLEDBY_ATTR = 'aria-labelledby';
+    var ARIA_SELECTED_ATTR = 'aria-selected', ARIA_HIDDEN_ATTR = 'aria-hidden', ARIA_EXPANDED_ATTR='aria-expanded', ARIA_ACTIVEDESCENDANT_ATTR='aria-activedescendant', ARIA_LABELLEDBY_ATTR = 'aria-labelledby';
     var EXPANDED_ITEM_SELECTOR = 'li[aria-expanded="true"]', ITEM_SELECTED_SELECTOR = '[aria-selected="true"]';
     var HAS_CHILDREN_CLASS = 'at-has-children', HAS_CHILDREN_CLASS_SELECTOR = '.' + HAS_CHILDREN_CLASS;
     var NO_CHILDREN_CLASS = 'at-no-children';
@@ -67,7 +67,7 @@
             }
 
             if (this.options.toggleSelector) {
-                $tree.find(this.options.toggleSelector).addClass(TOGGLE_CLASS).attr('aria-hidden','true');
+                $tree.find(this.options.toggleSelector).addClass(TOGGLE_CLASS).attr(ARIA_HIDDEN_ATTR,'true');
             } else {
                 var toggleHtml = '';
                 if (this.options.customToggle.html) {
