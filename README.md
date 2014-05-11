@@ -4,3 +4,6 @@
 Created and maintained by [Matt Long](https://github.com/longmatthewh).
 
 See how it works and get started at http://longmatthewh.github.io/a11yTree/.
+
+##License
+a11yTree is licensed under the MIT License.
