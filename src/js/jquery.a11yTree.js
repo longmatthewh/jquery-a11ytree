@@ -298,14 +298,18 @@
                 }
             }
         },
+        getTreeIdPiece : function() {
+            if (this.element.id) {
+                return '-' + this.element.id;
+            } else {
+                return '';
+            }
+        },
         generateListItemId : function($listItem, $list) {
             var id;
             if ($list.parent(LIST_ITEM_SELECTOR).length === 0) {
-                id = ITEM_ID_PREFIX;
-                if (this.element.id) {
-                    id = id + '-' + this.element.id;
-                }
-                id = id + '-n';
+                id = ITEM_ID_PREFIX + this.getTreeIdPiece() + '-n';
+
             } else {
                 id = $listItem.data(ITEM_ID_DATA_ATTR) || $list.parent(LIST_ITEM_SELECTOR).attr(ID_ATTR_NAME);
             }
