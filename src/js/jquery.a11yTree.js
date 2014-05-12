@@ -2,7 +2,7 @@
     var PLUGIN_NAME = 'a11yTree';
     var PLUGIN_PREFIX = 'plugin_';
     var LIST_SELECTOR = 'ul', LIST_ITEM_SELECTOR = 'li';
-    var ID_ATTR_NAME = 'id', ITEM_ID_PREFIX = 'at-n', ITEM_ID_DATA_ATTR = 'at-identity', NODE_LABEL_SUFFIX = '-label';
+    var ID_ATTR_NAME = 'id', ITEM_ID_PREFIX = 'at', ITEM_ID_DATA_ATTR = 'at-identity', NODE_LABEL_SUFFIX = '-label';
     var TABINDEX_ATTR_NAME = 'tabindex';
     var KEYDOWN_EVENT = 'keydown', CLICK_EVENT = 'click';
     var ROLE_ATTR_NAME = 'role', ARIA_LEVEL_ATTR_NAME = 'aria-level';
@@ -302,6 +302,10 @@
             var id;
             if ($list.parent(LIST_ITEM_SELECTOR).length === 0) {
                 id = ITEM_ID_PREFIX;
+                if (this.element.id) {
+                    id = id + '-' + this.element.id;
+                }
+                id = id + '-n';
             } else {
                 id = $listItem.data(ITEM_ID_DATA_ATTR) || $list.parent(LIST_ITEM_SELECTOR).attr(ID_ATTR_NAME);
             }

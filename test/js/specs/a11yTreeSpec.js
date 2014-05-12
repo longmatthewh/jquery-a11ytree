@@ -353,6 +353,24 @@ describe('a11yTree plugin', function () {
 
         it('constructs list element id using element level and sibling position', function() {
             $(LEVEL_1_ID_SELECTOR).a11yTree();
+            expect($('#at-level-1-n-0').length).toBe(1);
+            expect($('#at-level-1-n-0-0').length).toBe(1);
+            expect($('#at-level-1-n-0-0-0').length).toBe(1);
+            expect($('#at-level-1-n-0-0-1').length).toBe(1);
+            expect($('#at-level-1-n-0-1').length).toBe(1);
+            expect($('#at-level-1-n-1').length).toBe(1);
+        });
+
+        it('updates aria-activedescendant with item selected on change', function() {
+            $(LEVEL_1_ID_SELECTOR).a11yTree();
+            expect($(LEVEL_1_ID_SELECTOR).attr('aria-activedescendant')).toBe('at-level-1-n-0');
+            downArrowKey();
+            expect($(LEVEL_1_ID_SELECTOR).attr('aria-activedescendant')).toBe('at-level-1-n-1');
+        });
+
+        it('does not use tree id as prefix if tree id does not exist', function() {
+            $(LEVEL_1_ID_SELECTOR).removeAttr('id');
+            $(MAIN_SELECTOR + '> ul').a11yTree();
             expect($('#at-n-0').length).toBe(1);
             expect($('#at-n-0-0').length).toBe(1);
             expect($('#at-n-0-0-0').length).toBe(1);
@@ -361,12 +379,6 @@ describe('a11yTree plugin', function () {
             expect($('#at-n-1').length).toBe(1);
         });
 
-        it('updates aria-activedescendant with item selected on change', function() {
-            $(LEVEL_1_ID_SELECTOR).a11yTree();
-            expect($(LEVEL_1_ID_SELECTOR).attr('aria-activedescendant')).toBe('at-n-0');
-            downArrowKey();
-            expect($(LEVEL_1_ID_SELECTOR).attr('aria-activedescendant')).toBe('at-n-1');
-        });
     });
 
     describe('has options', function() {
@@ -413,19 +425,19 @@ describe('a11yTree plugin', function () {
         describe('treeItemLabelSelector', function() {
             it('adds a unique id to each item found by selector', function() {
                 $(LEVEL_1_ID_SELECTOR).a11yTree({treeItemLabelSelector :'.tree-item-node'});
-                expect($('#at-n-0-label').length).toBe(1);
-                expect($('#at-n-0-0-label').length).toBe(1);
-                expect($('#at-n-0-0-0-label').length).toBe(1);
-                expect($('#at-n-0-0-1-label').length).toBe(1);
-                expect($('#at-n-0-1-label').length).toBe(1);
-                expect($('#at-n-1-label').length).toBe(1);
+                expect($('#at-level-1-n-0-label').length).toBe(1);
+                expect($('#at-level-1-n-0-0-label').length).toBe(1);
+                expect($('#at-level-1-n-0-0-0-label').length).toBe(1);
+                expect($('#at-level-1-n-0-0-1-label').length).toBe(1);
+                expect($('#at-level-1-n-0-1-label').length).toBe(1);
+                expect($('#at-level-1-n-1-label').length).toBe(1);
             });
 
             it('adds aria-labelledby only to items that have children', function() {
                 $(LEVEL_1_ID_SELECTOR).a11yTree({treeItemLabelSelector :'.tree-item-node'});
                 expect($(LEVEL_1_ID_SELECTOR).find('[aria-labelledby]').length).toBe(2);
-                expect($(LEVEL_2_ID_SELECTOR).attr('aria-labelledby')).toBe('at-n-0-label');
-                expect($(LEVEL_3_ID_SELECTOR).attr('aria-labelledby')).toBe('at-n-0-0-label');
+                expect($(LEVEL_2_ID_SELECTOR).attr('aria-labelledby')).toBe('at-level-1-n-0-label');
+                expect($(LEVEL_3_ID_SELECTOR).attr('aria-labelledby')).toBe('at-level-1-n-0-0-label');
             });
         });
 
