@@ -28,6 +28,7 @@
 
     function Plugin( element, options ) {
         this.element = element;
+        this.treeIdPiece = this.element.id ? '-' + this.element.id : '';
         this.options = $.extend( {}, defaults, options);
         this._defaults = defaults;
         this.init();
@@ -298,17 +299,10 @@
                 }
             }
         },
-        getTreeIdPiece : function() {
-            if (this.element.id) {
-                return '-' + this.element.id;
-            } else {
-                return '';
-            }
-        },
         generateListItemId : function($listItem, $list) {
             var id;
             if ($list.parent(LIST_ITEM_SELECTOR).length === 0) {
-                id = ITEM_ID_PREFIX + this.getTreeIdPiece() + '-n';
+                id = ITEM_ID_PREFIX + this.treeIdPiece + '-n';
 
             } else {
                 id = $listItem.data(ITEM_ID_DATA_ATTR) || $list.parent(LIST_ITEM_SELECTOR).attr(ID_ATTR_NAME);
