@@ -14,7 +14,7 @@
     var TOGGLE_CLASS = 'at-toggle', TOGGLE_CLASS_SELECTOR = '.' + TOGGLE_CLASS;
     var DOWN_ARROW_KEY = 40, UP_ARROW_KEY = 38, RIGHT_ARROW_KEY = 39, LEFT_ARROW_KEY = 37, ENTER_KEY=13, END_KEY=35, HOME_KEY=36;
 
-    defaults = {
+    var defaults = {
         treeLabelId : undefined,
         treeItemLabelSelector : undefined,
         toggleSelector : undefined,
@@ -30,7 +30,6 @@
         this.element = element;
         this.treeIdPiece = this.element.id ? '-' + this.element.id : '';
         this.options = $.extend( {}, defaults, options);
-        this._defaults = defaults;
         this.init();
     }
 
@@ -63,9 +62,7 @@
             }
         },
         attachToggle : function($tree) {
-            if (this.options.insertToggle === false) {
-                return;
-            }
+            if (this.options.insertToggle === false) {return;}
 
             if (this.options.toggleSelector) {
                 $tree.find(this.options.toggleSelector).addClass(TOGGLE_CLASS).attr(ARIA_HIDDEN_ATTR,'true');
@@ -117,7 +114,7 @@
                     event.preventDefault();
                     self.handleLeftArrowKey($currentFocusedElement, $tree);
                 } else if (self.isKey(event, ENTER_KEY)) {
-                    self.handleEnterKey($currentFocusedElement, $tree);
+                    self.handleEnterKey($currentFocusedElement);
                 } else if (self.isKey(event, END_KEY)) {
                     event.preventDefault();
                     self.handleEndKey($currentFocusedElement, $tree);
@@ -161,7 +158,7 @@
                 this.focusOnNextAvailableSiblingInTree($item, $tree);
             }
         },
-        handleEnterKey : function($item, $tree) {
+        handleEnterKey : function($item) {
             this.toggleExpandCollapse($item);
         },
         handleEndKey : function($item, $tree) {
@@ -303,7 +300,6 @@
             var id;
             if ($list.parent(LIST_ITEM_SELECTOR).length === 0) {
                 id = ITEM_ID_PREFIX + this.treeIdPiece + NODE_ID_PREFIX;
-
             } else {
                 id = $listItem.data(ITEM_ID_DATA_ATTR) || $list.parent(LIST_ITEM_SELECTOR).attr(ID_ATTR_NAME);
             }
