@@ -468,10 +468,10 @@ describe('a11yTree plugin', function () {
                         customToggle : {
                             html: '<i class="fa fa-plus-square-o"></i>'
                         },
-                        onCollapse: function ($toggle) {
+                        onCollapse: function ($toggle, event) {
                             $toggle.children('.at-toggle').find('.fa-minus-square-o').removeClass('fa-minus-square-o').addClass('fa-plus-square-o');
                         },
-                        onExpand: function ($toggle) {
+                        onExpand: function ($toggle, event) {
                             $toggle.children('.at-toggle').find('.fa-plus-square-o').removeClass('fa-plus-square-o').addClass('fa-minus-square-o');
                         }
                     }

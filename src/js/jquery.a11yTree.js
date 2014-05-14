@@ -79,7 +79,7 @@
             var self = this;
             $tree.find(TOGGLE_CLASS_SELECTOR).on(CLICK_EVENT, function(event) {
                 var $listItemWithToggle = $(this).parent(LIST_ITEM_SELECTOR);
-                self.toggleExpandCollapse($listItemWithToggle);
+                self.toggleExpandCollapse($listItemWithToggle, event);
             });
         },
         addMouseNav : function($tree) {
@@ -109,10 +109,10 @@
                     self.handleUpArrowKey($currentFocusedElement, $tree);
                 } else if (self.isKey(event, RIGHT_ARROW_KEY)) {
                     event.preventDefault();
-                    self.handleRightArrowKey($currentFocusedElement, $tree);
+                    self.handleRightArrowKey($currentFocusedElement, $tree, event);
                 } else if (self.isKey(event, LEFT_ARROW_KEY)) {
                     event.preventDefault();
-                    self.handleLeftArrowKey($currentFocusedElement, $tree);
+                    self.handleLeftArrowKey($currentFocusedElement, $tree, event);
                 } else if (self.isKey(event, ENTER_KEY)) {
                     self.handleEnterKey($currentFocusedElement);
                 } else if (self.isKey(event, END_KEY)) {
@@ -127,16 +127,16 @@
         addTreeToTabOrder : function($tree) {
             $tree.attr(TABINDEX_ATTR_NAME, '0');
         },
-        handleLeftArrowKey : function($item, $tree) {
+        handleLeftArrowKey : function($item, $tree, event) {
             if (this.isExpanded($item)) {
-                this.collapse($item);
+                this.collapse($item, event);
             } else {
                 this.focusOn(this.findParent($item), $tree);
             }
         },
-        handleRightArrowKey : function($item, $tree) {
+        handleRightArrowKey : function($item, $tree, event) {
             if (this.isCollapsed($item)) {
-                this.expand($item);
+                this.expand($item, event);
             } else if (this.isExpanded($item)) {
                 this.focusOn(this.findFirstListItemInSubList($item), $tree);
             }
@@ -158,8 +158,8 @@
                 this.focusOnNextAvailableSiblingInTree($item, $tree);
             }
         },
-        handleEnterKey : function($item) {
-            this.toggleExpandCollapse($item);
+        handleEnterKey : function($item, event) {
+            this.toggleExpandCollapse($item, event);
         },
         handleEndKey : function($item, $tree) {
             this.focusOnLastVisibleElementInTree($tree);
@@ -206,15 +206,15 @@
             }
             return this.findClosestExpandedTree($tree, $closestExpandedListItem);
         },
-        expand : function($item) {
+        expand : function($item, event) {
             if (this.options.onExpand) {
-                this.options.onExpand($item);
+                this.options.onExpand($item, event);
             }
             $item.attr(ARIA_EXPANDED_ATTR,'true');
         },
-        collapse : function($item) {
+        collapse : function($item, event) {
             if (this.options.onCollapse) {
-                this.options.onCollapse($item);
+                this.options.onCollapse($item, event);
             }
             $item.attr(ARIA_EXPANDED_ATTR,'false');
         },
@@ -224,11 +224,11 @@
         isCollapsed : function($item) {
             return $item.attr(ARIA_EXPANDED_ATTR) === 'false';
         },
-        toggleExpandCollapse : function($item) {
+        toggleExpandCollapse : function($item, event) {
             if (this.isCollapsed($item)) {
-                this.expand($item);
+                this.expand($item, event);
             } else {
-                this.collapse($item);
+                this.collapse($item, event);
             }
         },
         isParentTree : function($list) {
