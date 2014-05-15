@@ -462,34 +462,43 @@ describe('a11yTree plugin', function () {
         });
 
         describe('onCollapse and onExpand callbacks', function() {
+            var collapseCallback, expandCallback;
+
             beforeEach(function() {
+                collapseCallback = jasmine.createSpy();
+                expandCallback = jasmine.createSpy();
                 $(LEVEL_1_ID_SELECTOR).a11yTree(
                     {
-                        customToggle : {
-                            html: '<i class="fa fa-plus-square-o"></i>'
-                        },
-                        onCollapse: function ($toggle, event) {
-                            $toggle.children('.at-toggle').find('.fa-minus-square-o').removeClass('fa-minus-square-o').addClass('fa-plus-square-o');
-                        },
-                        onExpand: function ($toggle, event) {
-                            $toggle.children('.at-toggle').find('.fa-plus-square-o').removeClass('fa-plus-square-o').addClass('fa-minus-square-o');
-                        }
+                        onCollapse: collapseCallback,
+                        onExpand: expandCallback
                     }
                 );
                 focusOnItem($firstLevel1Item);
             });
 
-            it('onCollapse triggers custom toggle collapse when defined', function() {
+            it('left arrow key onCollapse triggers custom toggle collapse with event when defined', function() {
                 rightArrowKey();
                 leftArrowKey();
-                expect($('.fa-plus-square-o').length).toBe(2);
-                expect($('.fa-minus-square-o').length).toBe(0);
+                expect(collapseCallback).toHaveBeenCalledWith(jasmine.any(Object), jasmine.any(Object));
             });
 
-            it('onExpand triggers custom toggle expand when defined', function() {
+            it('right arrow key onExpand triggers custom toggle expand with event when defined', function() {
                 rightArrowKey();
-                expect($('.fa-minus-square-o').length).toBe(1);
-                expect($('.fa-plus-square-o').length).toBe(1);
+                expect(expandCallback).toHaveBeenCalledWith(jasmine.any(Object), jasmine.any(Object));
+            });
+
+            it('enter key triggers custom toggle expand with event when defined', function() {
+                enterKey();
+                expect(expandCallback).toHaveBeenCalledWith(jasmine.any(Object), jasmine.any(Object));
+                enterKey();
+                expect(collapseCallback).toHaveBeenCalledWith(jasmine.any(Object), jasmine.any(Object));
+            });
+
+            it('clicking toggle triggers custom toggle expand with event when defined', function() {
+                $('.at-toggle').get(0).click();
+                expect(expandCallback).toHaveBeenCalledWith(jasmine.any(Object), jasmine.any(Object));
+                $('.at-toggle').get(0).click();
+                expect(collapseCallback).toHaveBeenCalledWith(jasmine.any(Object), jasmine.any(Object));
             });
         });
     });

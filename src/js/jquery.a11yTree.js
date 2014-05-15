@@ -114,7 +114,7 @@
                     event.preventDefault();
                     self.handleLeftArrowKey($currentFocusedElement, $tree, event);
                 } else if (self.isKey(event, ENTER_KEY)) {
-                    self.handleEnterKey($currentFocusedElement);
+                    self.handleEnterKey($currentFocusedElement, event);
                 } else if (self.isKey(event, END_KEY)) {
                     event.preventDefault();
                     self.handleEndKey($currentFocusedElement, $tree);
