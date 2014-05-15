@@ -494,10 +494,11 @@ describe('a11yTree plugin', function () {
                 expect(collapseCallback).toHaveBeenCalledWith(jasmine.any(Object), jasmine.any(Object));
             });
 
-            xit('clicking toggle triggers custom toggle expand with event when defined', function() {
-                $('.at-toggle').get(0).click();
+            it('clicking toggle triggers custom toggle expand with event when defined', function() {
+                var $firstToggle = $('.at-toggle')[0];
+                $firstToggle.click();
                 expect(expandCallback).toHaveBeenCalledWith(jasmine.any(Object), jasmine.any(Object));
-                $('.at-toggle').get(0).click();
+                $firstToggle.click();
                 expect(collapseCallback).toHaveBeenCalledWith(jasmine.any(Object), jasmine.any(Object));
             });
         });
