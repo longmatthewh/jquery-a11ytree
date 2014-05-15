@@ -494,8 +494,8 @@ describe('a11yTree plugin', function () {
                 expect(collapseCallback).toHaveBeenCalledWith(jasmine.any(Object), jasmine.any(Object));
             });
 
-            it('clicking toggle triggers custom toggle expand with event when defined', function() {
-                var $firstToggle = $('.at-toggle')[0];
+            xit('clicking toggle triggers custom toggle expand with event when defined', function() {
+                var $firstToggle = $(TOGGLE_CLASS_SELECTOR)[0];
                 $firstToggle.click();
                 expect(expandCallback).toHaveBeenCalledWith(jasmine.any(Object), jasmine.any(Object));
                 $firstToggle.click();
