@@ -42,24 +42,26 @@
             this.addMouseNav($tree);
             this.addKeyBoardNav($tree);
         },
-        addTreeLabels : function($tree) {
+        addIdToTreeLabels: function ($tree) {
+            var self = this;
+            var treeItemLabelSelector = self.options.treeItemLabelSelector;
+            if (treeItemLabelSelector) {
+                var $treeItems = $tree.find(HAS_CHILDREN_CLASS_SELECTOR);
+                $treeItems.each(function () {
+                    var $treeItem = $(this);
+                    var labelId = $treeItem.children(treeItemLabelSelector).attr(ID_ATTR_NAME);
+                    if (labelId) {
+                        $treeItem.children(LIST_SELECTOR).attr(ARIA_LABELLEDBY_ATTR, labelId);
+                    }
+                });
+            }
+        }, addTreeLabels : function($tree) {
             var self = this;
             var treeLabelId = self.options.treeLabelId;
             if (treeLabelId && $('#' + treeLabelId).length > 0) {
                 $tree.attr(ARIA_LABELLEDBY_ATTR,treeLabelId);
             }
-
-            var treeItemLabelSelector = this.options.treeItemLabelSelector;
-            if (treeItemLabelSelector) {
-                var $treeItems =  $tree.find(HAS_CHILDREN_CLASS_SELECTOR);
-                $treeItems.each(function() {
-                    var $treeItem = $(this);
-                    var labelId = $treeItem.children(treeItemLabelSelector).attr(ID_ATTR_NAME);
-                    if (labelId) {
-                        $treeItem.children(LIST_SELECTOR).attr(ARIA_LABELLEDBY_ATTR,labelId);
-                    }
-                });
-            }
+            self.addIdToTreeLabels($tree);
         },
         attachToggle : function($tree) {
             if (this.options.insertToggle === false) {return;}
@@ -94,31 +96,28 @@
             this.addTreeToTabOrder($tree);
             this.handleKeys($tree);
         },
-        isKey : function(event, key) {
-            return event.which === key;
-        },
         handleKeys : function($tree) {
             var self = this;
             $tree.on(KEYDOWN_EVENT, function(event) {
                 var $currentFocusedElement = $tree.find(ITEM_SELECTED_SELECTOR);
-                if (self.isKey(event, DOWN_ARROW_KEY)) {
+                if (_isKey(event, DOWN_ARROW_KEY)) {
                     event.preventDefault();
                     self.handleDownArrowKey($currentFocusedElement, $tree);
-                } else if (self.isKey(event, UP_ARROW_KEY)) {
+                } else if (_isKey(event, UP_ARROW_KEY)) {
                     event.preventDefault();
                     self.handleUpArrowKey($currentFocusedElement, $tree);
-                } else if (self.isKey(event, RIGHT_ARROW_KEY)) {
+                } else if (_isKey(event, RIGHT_ARROW_KEY)) {
                     event.preventDefault();
                     self.handleRightArrowKey($currentFocusedElement, $tree, event);
-                } else if (self.isKey(event, LEFT_ARROW_KEY)) {
+                } else if (_isKey(event, LEFT_ARROW_KEY)) {
                     event.preventDefault();
                     self.handleLeftArrowKey($currentFocusedElement, $tree, event);
-                } else if (self.isKey(event, ENTER_KEY)) {
+                } else if (_isKey(event, ENTER_KEY)) {
                     self.handleEnterKey($currentFocusedElement, event);
-                } else if (self.isKey(event, END_KEY)) {
+                } else if (_isKey(event, END_KEY)) {
                     event.preventDefault();
                     self.handleEndKey($currentFocusedElement, $tree);
-                } else if (self.isKey(event, HOME_KEY)) {
+                } else if (_isKey(event, HOME_KEY)) {
                     event.preventDefault();
                     self.handleHomeKey($currentFocusedElement, $tree);
                 }
@@ -315,5 +314,9 @@
             }
         });
     };
+
+    function _isKey(event, key) {
+        return event.which === key;
+    }
 
 })( jQuery, window, document );
