@@ -1,4 +1,4 @@
-[a11yTree v1.2.5](http://longmatthewh.github.io/a11yTree/) [![Build Status](https://travis-ci.org/longmatthewh/jquery-a11ytree.svg?branch=master)](https://travis-ci.org/longmatthewh/jquery-a11ytree) [![Built with Grunt](https://cdn.gruntjs.com/builtwith.png)](http://gruntjs.com/)
+[a11yTree v1.2.6](http://longmatthewh.github.io/a11yTree/) [![Build Status](https://travis-ci.org/longmatthewh/jquery-a11ytree.svg?branch=master)](https://travis-ci.org/longmatthewh/jquery-a11ytree) [![Built with Grunt](https://cdn.gruntjs.com/builtwith.png)](http://gruntjs.com/)
 ===============
 
 Created and maintained by [Matt Long](https://github.com/longmatthewh).
