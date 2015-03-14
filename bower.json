@@ -1,5 +1,5 @@
 {
   "name": "jquery.a11yTree",
   "version": "1.2.7",
-  "main":"dist/jquery.a11yTree.min"
+  "main":"dist/jquery.a11yTree.min.js"
 }
